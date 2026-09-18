@@ -5,14 +5,14 @@ The detailed items live in `@tasks/TASKLIST.md`; this file is the at-a-glance tr
 
 Status keys: `[ ]` not started · `[~]` in progress · `[x]` done
 
-Last updated: (set on each change)
+Last updated: 2026-09-17
 
 ---
 
 ## Currently working on
-- Task: **1.1.1** — Create root repo with /web, /api, /shared, README, .gitignore
-- Branch: `feature/1.1-repo-tooling`
-- Notes: —
+- Task: **1.1.1** — done, awaiting commit approval. Next: **1.1.2** editorconfig + prettier
+- Branch: `feature/repo-tooling`
+- Notes: local machine has Node 24 (plan says Node 20 LTS; .nvmrc set to 20). docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
 
 ---
 
@@ -37,7 +37,7 @@ Last updated: (set on each change)
 > Mirror of TASKLIST.md items. Tick here as you complete each. Only Task 1 is expanded to show the format; add rows for each task as you reach it (or copy the full list from TASKLIST.md).
 
 ### Task 1 — Scaffolding
-- [ ] 1.1.1 root repo + folders
+- [x] 1.1.1 root repo + folders
 - [ ] 1.1.2 editorconfig + prettier
 - [ ] 1.1.3 .env.example (both apps)
 - [ ] 1.2.1 Express+TS init
@@ -60,4 +60,5 @@ _(Add Task 2+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-17 — 1.1.1 done: git init (main) + branch feature/repo-tooling; /web /api /shared; README; .gitignore; .nvmrc; docker-compose.yml (Postgres 16, local only).
 - (start) Project docs + task list created.

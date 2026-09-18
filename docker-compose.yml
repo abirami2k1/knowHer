@@ -1,0 +1,33 @@
+# knowHer — local development database only.
+# Production uses AWS RDS; this file never runs in prod.
+#
+# Start:   docker compose up -d db
+# Stop:    docker compose down
+# Reset:   docker compose down -v   (drops the local data volume)
+#
+# Matching DATABASE_URL for /api/.env:
+#   postgresql://knowher:knowher@localhost:5432/knowher?schema=public
+
+name: knowher
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: knowher-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: knowher
+      POSTGRES_PASSWORD: knowher
+      POSTGRES_DB: knowher
+    ports:
+      - "5432:5432"
+    volumes:
+      - knowher-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U knowher -d knowher"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  knowher-pgdata:

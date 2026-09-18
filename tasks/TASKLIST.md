@@ -16,7 +16,7 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Task 1 — SCAFFOLDING
 
 ### Task 1.1 — Repo & tooling
-- [ ] **1.1.1** `[infra]` Create root repo with `/web`, `/api`, `/shared`, root `README.md`, `.gitignore`. AC: folders exist, git initialized.
+- [x] **1.1.1** `[infra]` Create root repo with `/web`, `/api`, `/shared`, root `README.md`, `.gitignore`. AC: folders exist, git initialized.
 - [ ] **1.1.2** `[infra]` Add root `.editorconfig` and Prettier config shared by both apps. AC: `prettier --check` runs.
 - [ ] **1.1.3** `[infra]` Create `.env.example` in `/api` and `/web` with placeholder keys (DB, Cognito, S3, API URL). AC: no real secrets; documented.
 - [ ] **1.1.4** `[infra]` Add GitHub Actions CI: lint + build (web & api) + engine tests on every push/PR. AC: pipeline green on main.
