@@ -1,0 +1,198 @@
+// knowHer — Prisma schema (Task 2 target)
+// Decisions encoded here:
+//  - All user-facing dates are plain local calendar dates (@db.Date), chosen client-side.
+//  - DailyLog has NO cycleId: cycle membership is derived from Cycle date ranges.
+//  - Assessment fields on Cycle are a SNAPSHOT written when the cycle closes
+//    (live cycles are computed on read). expectedOvulation is never stored.
+//  - CycleSummary ships now; the retention job that populates+prunes is deferred.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────
+
+enum Flow {
+  none
+  spotting
+  light
+  medium
+  heavy
+}
+
+enum CervicalMucus {
+  dry
+  sticky
+  watery
+  eggwhite
+}
+
+enum CervixPosition {
+  firm // shown as F
+  medium // shown as M
+  soft // shown as S
+}
+
+enum AgeBand {
+  under18
+  b18_24
+  b25_34
+  b35_44
+  b45_plus
+}
+
+enum Condition {
+  pcod
+  pmdd
+  endo
+  none
+  unsure
+}
+
+enum Goal {
+  understand_body
+  track_period
+  ovulation_awareness
+  plan_life
+  manage_condition
+  learn
+}
+
+enum Role {
+  user
+  author
+}
+
+enum Audience {
+  user
+  supporter
+  both
+}
+
+// ── Models ───────────────────────────────────────────────────────────────
+
+model User {
+  id              String      @id @default(cuid())
+  cognitoSub      String      @unique
+  displayName     String?
+  ageBand         AgeBand?
+  conditions      Condition[] @default([]) // Zod refine: none/unsure are exclusive of the rest
+  goals           Goal[]      @default([])
+  trackingBBT     Boolean     @default(false)
+  trackingMucus   Boolean     @default(false)
+  avgCycleLength  Int? // self-reported at onboarding; refined from history
+  avgPeriodLength Int?
+  tempUnit        String      @default("F") // locked to F for MVP
+  role            Role        @default(user)
+  onboardedAt     DateTime? // null = onboarding not finished (route guard)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  cycles    Cycle[]
+  dailyLogs DailyLog[]
+  summaries CycleSummary[]
+  blogPosts BlogPost[]
+}
+
+model Cycle {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startDate DateTime  @db.Date
+  endDate   DateTime? @db.Date // set when the NEXT period start closes this cycle
+  length    Int? // derived, persisted on close
+  // NOTE: a cycle is "complete" iff endDate != null — no separate flag to drift.
+
+  // Assessment snapshot — null while cycle is live (computed on read),
+  // written by the engine when the cycle closes or its logs are edited.
+  coverlineF     Decimal? @db.Decimal(5, 2)
+  ovulationDay   Int? // cycle day (1-based)
+  peakDay        Int?
+  lutealLength   Int?
+  isAnovulatory  Boolean  @default(false)
+  confidence     String? // full | reduced | none
+  confidenceNote String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, startDate])
+}
+
+model DailyLog {
+  id     String   @id @default(cuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date   DateTime @db.Date // local calendar date, client-chosen
+
+  flow            Flow?
+  bbtF            Decimal?        @db.Decimal(5, 2) // e.g. 97.65
+  tempTakenAt     String? // local "HH:mm", NOT a UTC instant
+  isDisturbed     Boolean         @default(false)
+  disturbedReason String?
+  cervicalMucus   CervicalMucus?
+  cervixPosition  CervixPosition?
+  mood            String? // controlled vocab in /shared
+  energy          Int? // 1–5
+  symptoms        String[]        @default([]) // controlled vocab in /shared (queryable, unlike Json)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date]) // one entry per day; also serves userId lookups
+}
+
+model CycleSummary {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cycleStartDate   DateTime @db.Date
+  cycleLength      Int
+  ovulationDay     Int?
+  peakDay          Int?
+  lutealLength     Int?
+  avgBbtF          Decimal? @db.Decimal(5, 2)
+  symptomAggregate Json // { symptom: countByPhaseOrTotal }
+  energyAggregate  Json // { phase: avgEnergy }
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  @@unique([userId, cycleStartDate])
+}
+
+model BlogPost {
+  id           String    @id @default(cuid())
+  authorId     String
+  // Restrict: an author account with posts cannot be hard-deleted; the delete
+  // flow must surface "reassign or remove your posts first" instead of failing
+  // mid-transaction. (Regular users have no posts and are unaffected.)
+  author       User      @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  title        String
+  slug         String    @unique
+  bodyMarkdown String
+  audience     Audience  @default(user)
+  isPublished  Boolean   @default(false)
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([isPublished, audience])
+}
+
+model KnowledgeArticle {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  bodyMarkdown String
+  category     String // basics | cycle | supporters
+  orderIndex   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([category, orderIndex])
+}
