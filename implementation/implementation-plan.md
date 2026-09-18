@@ -54,6 +54,8 @@ Use `implementation/schema.prisma` as the target schema (copy to `api/prisma/sch
 
 ## Task 4 — Cycle rule engine (`api/src/domain/cycle/`)
 
+> **Superseded for Task 4 internals by `cycle-engine-plan.md` (adopted 2026-09-17).** The section below is kept for history; where they differ, the engine plan wins.
+
 Pure module. No imports from prisma/express; no `Date.now()` — "today" is passed in.
 
 `rules.ts`:

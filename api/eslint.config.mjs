@@ -25,5 +25,23 @@ export default defineConfig([
       'prefer-const': 'error',
     },
   },
+  {
+    // The cycle engine is pure: no HTTP, no database. See cycle-engine-plan.md §3.
+    files: ['src/domain/cycle/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['express', 'express/*'], message: 'The cycle engine is pure — no HTTP.' },
+            {
+              group: ['**/generated/**', '**/lib/prisma', '@prisma/*'],
+              message: 'The cycle engine is pure — no database.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   prettier,
 ]);

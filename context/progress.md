@@ -9,9 +9,21 @@ Last updated: 2026-09-17
 
 ---
 
+## Needed from the founder (blocking items — the build continues around them)
+- [ ] **4.4.0 Sivi session** — take `implementation/cycle-engine-plan.md` §11 (10 questions) and `implementation/cycle-engine-evidence.md` §11 (rule proposals) to Sivi. Her answers become fixture expectations; ask whether a de-identified copy of her sample cycle may be checked in as `sivi-sample`. Until then the engine runs the adopted defaults and 4.4.2 stays [~].
+- [ ] **Evidence-file decisions (founder)** — luteal prior 13 + personal mean, FIGO irregularity by age band, coverage floor before an anovulatory verdict, `minValidTemps` derived (9), `plausibleRangeF` + `implausible_reading`, `rulesVersion` column on `Cycle` (schema change), "around day N" wording. Each is one rules key + one fixture once decided.
+- [ ] **1.2.7 Sentry** — provide DSNs for api + web, or decide to skip error monitoring for MVP.
+- [ ] **11.0.6 S3** — keep (blog/knowledge image uploads via presigned URLs) or drop from the stack.
+- [ ] **12.0.3 Cognito admin credentials** — `DELETE /account` must disable then delete the Cognito user (D8). The API needs IAM credentials (or an instance role) allowed `cognito-idp:AdminDisableUser` + `AdminDeleteUser` on the pool. Until provided, the DB side of deletion ships and the Cognito step is a documented stub that fails closed.
+- [ ] **13.0.1 VAPID** — approve generating the web-push key pair.
+- [ ] **AWS cleanup** — delete app clients `knowher-web` and `knowher-web-spa` (unused; the second one's secret was pasted in chat). `knowher-web-public` is the live one.
+- [ ] **Git cleanup** — delete merged branches `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding`, `feature/database`, `feature/auth`, `feature/cycle-engine` on your say-so.
+
+---
+
 ## Currently working on
-- Task: **Task 3 complete, awaiting commit approval.** Next: **4.1.1** cycle engine structure (no checkpoint until 4.4.0 Sivi fixtures) (real pool IDs in /api/.env + /web/.env.local). Once present: verify sign-up → confirm → login → /me → sign-out end to end, tick 3.1.4–3.2.5, then commit Task 3. Still open: 1.2.7 Sentry (founder DSNs or skip).
-- Branch: `feature/auth` (Task 3). `feature/database` merged. `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding` are fully merged — delete on founder OK.
+- Task: **5.1.1** — onboarding API (PATCH /me + POST /onboarding, Zod). Task 4 committed through the gate; 4.4.0 parked (see "Needed from the founder"). (real pool IDs in /api/.env + /web/.env.local). Once present: verify sign-up → confirm → login → /me → sign-out end to end, tick 3.1.4–3.2.5, then commit Task 3. Still open: 1.2.7 Sentry (founder DSNs or skip).
+- Branch: `feature/onboarding` (Task 5). All earlier feature branches merged. `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding` are fully merged — delete on founder OK.
 - Notes: Task 1 merged to main (2c042d2), CI green and pushed to origin (github.com/abirami2k1/knowHer). First CI run red as expected (no apps yet). 1.2.6 (hardening) + 1.2.7 (Sentry, checkpoint) added to TASKLIST per founder OK. Project moved to Node 24 LTS on 2026-09-17 (Node 20 is EOL; Vitest 5 requires ≥ 22); .nvmrc = 24. docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
 
 ---
@@ -20,7 +32,7 @@ Last updated: 2026-09-17
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
 - [x] Task 2 — Database schema & migrations
 - [x] Task 3 — Auth (Cognito)
-- [ ] Task 4 — Cycle rule engine (pure + tests)
+- [~] Task 4 — Cycle rule engine (pure + tests) — code + synthetic fixtures done; 4.4.0 Sivi gate open
 - [ ] Task 5 — Onboarding
 - [ ] Task 6 — Daily Log + Period Tracker
 - [ ] Task 7 — Cycle Tracker UI
@@ -84,12 +96,34 @@ Last updated: 2026-09-17
 - [x] 3.2.4 route guard — anon → /login; authed → shell (Profile renders inside shell)
 - [x] 3.2.5 loading/error states — wrong password shows the friendly toast; pool misconfig errors surface plainly
 
-_(Add Task 4+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 4 — Cycle rule engine (spec: implementation/cycle-engine-plan.md)
+- [x] 4.1.1 domain/cycle/ (index, rules, copy, types) + purity test + ESLint import guard
+- [x] 4.1.2 CYCLE_RULES (typed interface, frozen, withRules() for overrides)
+- [x] 4.1.3 CycleLog / CycleInput / CycleAssessment / ChartPoint / Flag types
+- [x] 4.2.1 temps.ts (integer hundredths) + coverline.ts (window, candidate, dip) + computeCoverline
+- [x] 4.2.2 shift.ts detectThermalShift — 3-over-6, false-shift invalidation, pending, confirmation day
+- [x] 4.2.3 peak.ts detectPeakDay — last egg-white, confirmed after peakConfirmDays logged non-egg-white days
+- [x] 4.2.4 luteal.ts — lutealDayFor / computeLutealLength / lutealDayToday
+- [x] 4.2.5 assess.ts + series.ts — flags, confidence tiers, chart rows
+- [x] 4.3.1 anovulatory fixture
+- [x] 4.3.2 low-data fixture (not anovulatory; peak still found)
+- [x] 4.3.3 disturbed fixtures ×3 (excluded → same verdict; included → no shift; day-13 case moves the window — Sivi Q2/Q9)
+- [x] 4.3.4 false-shift fixture
+- [x] 4.3.5 disagreement fixture
+- [x] 4.3.6 live-pending fixtures ×3 + prefix-invariance tests (nothing provisional, ever)
+- [ ] 4.4.0 **Sivi gate** — founder checkpoint
+- [x] 4.4.1 copy.ts (all flags, confidence tiers, phases, fallbacks) + inline-prose guard test
+- [~] 4.4.2 all fixtures green (18 fixtures, 48 tests) — expectations final only after 4.4.0
+- [x] 4.4.3 config-flip fixtures (consecutiveRises=4 confirms a day later; with a day-20 dip it does not; control confirms)
+
+_(Add Task 5+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-17 — `implementation/cycle-engine-evidence.md` (literature review, status proposal) arrived from the founder's other session. Contains no workbook data. Its rule proposals (peakConfirmDays 3, disagreementToleranceDays 3, defaultLutealAssumption 13 + personal mean, FIGO irregularity by age band, coverage floor before an anovulatory verdict, minValidTemps derived = 9, plausibleRangeF + implausible_reading, rulesVersion on snapshots, 'around day N' wording) are NOT applied — each is tagged for Sivi or the founder and joins the 4.4.0 agenda.
+- 2026-09-17 — Task 4 engine built per cycle-engine-plan.md (adopted; phase/estimate deferred to Task 8). api/src/domain/cycle/: temps (integer hundredths, grid snap), coverline (window by readings or calendar days, candidate = snapped max + offset, dip annotation), shift (scan; run walks all readings so a disturbed one breaks it; false-shift slides the window; live → pending; optional dip anchor), peak, luteal, series (Temp Count / Luteal / Peak Count rows), assess (flags in fixed order, confidence tiers), copy (all keys), index. Guard rails: purity test (no Date/prisma/express), inline-prose scanner (assess/shift/peak/luteal/series/coverline hold no sentences), ESLint no-restricted-imports on the folder. 18 typed fixtures + invariants (determinism, order-independence, retrospective prefix test, chart rows). Finding: the plan's 'disturbed' claim was wrong for its own numbers — excluding day 13 pulls a lower reading into the window and moves ovulation to day 15; kept as its own fixture for Sivi (Q2/Q9). 48 api tests green.
 - 2026-09-17 — Task 3 verified end to end against the dev pool us-east-2 (SPA app client without a secret — the wizard's default "Traditional web application" type generates one, which the browser SDK cannot use; a probe with ForgotPassword on a nonexistent address reveals a secret requirement). Sign-up → email code → login → /me (one User row) → Profile (email from ID token) → sign-out → wrong-password toast → login all confirmed by the founder in the browser pane. Added confirm-password field. Two dead app clients (knowher-web, knowher-web-spa) remain in the pool; the latter's secret was pasted in chat — delete both.
 - 2026-09-17 — Task 3 code built ahead of the checkpoint. api: CONFIG.cognito (lazy), middleware/auth.ts `requireAuth` (aws-jwt-verify access-token verifier built on first use; Bearer parse → verify → upsert User by sub → req.user; any failure → 401 `unauthorized`, token never logged), services/users.ts (upsert + toProfile DTO), GET /me, src/types/express.d.ts, shared `UserProfile` + enum unions; vitest.config.ts carries placeholder pool IDs so the verifier can be constructed for parse-rejection tests (no network); 18 tests green. web: amazon-cognito-identity-js pool factory (null → honest "not set up" screen, never a fake login), AuthProvider (session restore, SRP sign-in, sign-up + confirm + resend, sign-out) with the context object in auth-context.ts for fast refresh, API client attaches a fresh access token per request via setAccessTokenProvider, /login + /signup pages, RequireAuth guard (anon → /login with return path), Profile shows /me + sign-out, sonner toasts, ui/Button + ui/Field primitives. Vite `define: { global: 'globalThis' }` fixes the SDK's Node `global` reference. Bundle now 608 kB (190 kB gzip) — revisit code-splitting in Task 13.
 - 2026-09-17 — 3.1.1 done: README section "Auth: AWS Cognito user pool" (SPA app client, email-only sign-in, SRP + refresh flows, IDs → both env files); .env.example comments point to it.

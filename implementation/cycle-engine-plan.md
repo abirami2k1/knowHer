@@ -1,6 +1,6 @@
 # knowHer — Cycle Engine Plan (Task 4)
 
-Status: **proposal, 2026-09-17.** Elaborates the Task 4 section of `implementation-plan.md` after reading Sivi's
+Status: **adopted 2026-09-17** (founder decision: `phase.ts` / `estimate.ts` deferred to Task 8, where they are first used). Originally a proposal that Elaborates the Task 4 section of `implementation-plan.md` after reading Sivi's
 "Chart your Cycle" workbook (founder-held PDF, not in the repo) and its sample chart. Where this document differs from
 `implementation-plan.md` it says so in §12; the founder decides which wins before 4.1.1 starts. Nothing here changes
 scope in `context/features.md`.

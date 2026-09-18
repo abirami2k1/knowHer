@@ -94,31 +94,33 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Task 4 — CYCLE RULE ENGINE (pure, tested)
 
 > No DB, no HTTP, no UI in this module. Lives in `api/src/domain/cycle/`.
+> **Spec: `implementation/cycle-engine-plan.md` (adopted 2026-09-17).** Its `phase.ts` / `estimate.ts` are deferred to Task 8, where they are first used.
 
 ### Task 4.1 — Structure & config `[api]`
-- [ ] **4.1.1** Create `domain/cycle/` with `index.ts`, `rules.ts`, `copy.ts`, `types.ts`. AC: imports compile.
-- [ ] **4.1.2** Define `CYCLE_RULES` config (coverlineWindow=6, consecutiveRises=3, minDataPoints=4, excludeDisturbed=true, invalidateFalseShift=true) with comments. AC: single source of tunables.
-- [ ] **4.1.3** Define input/output types (`CycleLog`, `CycleAssessment`). AC: types exported.
+- [x] **4.1.1** Create `domain/cycle/` with `index.ts`, `rules.ts`, `copy.ts`, `types.ts`. AC: imports compile.
+- [x] **4.1.2** Define `CYCLE_RULES` config (coverlineWindow=6, consecutiveRises=3, minValidTemps=4, excludeDisturbed=true, invalidateFalseShift=true, plus the engine-plan §5 keys: coverlineWindowUnit, coverlineAnchor, coverlineOffsetF, coverlineOnGrid, excludeEarlyCycleDays, peakConfirmDays, disagreementToleranceDays, estimate keys) with comments. AC: single source of tunables.
+- [x] **4.1.3** Define input/output types (`CycleLog`, `CycleAssessment`). AC: types exported.
 
 ### Task 4.2 — Pure functions `[api]`
-- [ ] **4.2.1** `computeCoverline(logs, rules)` → °F + days used | null. AC: returns value on clean fixture.
-- [ ] **4.2.2** `detectOvulation(logs, rules)` → day | null using **3-over-6**; mucus+drop as corroboration flag. AC: correct day on clean fixture.
-- [ ] **4.2.3** `detectPeakDay(logs)` → last egg-white day; confirmed only after 2–3 non-eggwhite days. AC: correct on fixture.
-- [ ] **4.2.4** `computeLutealLength(logs, ovulationDay)`. AC: correct count.
-- [ ] **4.2.5** `assessCycle(logs, rules)` → full summary `{coverlineF, ovulationDay, peakDay, lutealLength, isAnovulatory, confidence, flags[]}`. AC: composes the above.
+- [x] **4.2.1** `computeCoverline(logs, rules)` → °F + days used | null. AC: returns value on clean fixture.
+- [x] **4.2.2** `detectThermalShift(logs, rules)` → ovulation day + `shiftConfirmedOnDay` | pending using **3-over-6** with false-shift invalidation; dip+mucus surfaced as corroboration. AC: correct day and confirmation day on clean fixture.
+- [x] **4.2.3** `detectPeakDay(logs)` → last egg-white day; confirmed only after 2–3 non-eggwhite days. AC: correct on fixture.
+- [x] **4.2.4** `computeLutealLength(logs, ovulationDay)`. AC: correct count.
+- [x] **4.2.5** `assessCycle(input, rules)` → full summary `{coverlineF, coverlineWindowDays, dipDay, ovulationDay, shiftConfirmedOnDay, peakDay, peakConfirmedOnDay, lutealLength, lutealDayToday, isAnovulatory, confidence, flags[], series[]}`. AC: composes the above; `series` carries the chart rows so the UI never computes.
 
 ### Task 4.3 — Edge cases `[api]`
-- [ ] **4.3.1** Anovulatory (no shift) → `isAnovulatory:true`, no throw. AC: fixture passes.
-- [ ] **4.3.2** Missing days: compute if ≥ minDataPoints else null + "low_data" flag. AC: fixture passes.
-- [ ] **4.3.3** Disturbed readings excluded from coverline window per config. AC: fixture passes.
-- [ ] **4.3.4** False shift (cross then drop) invalidated; scan continues. AC: fixture passes.
-- [ ] **4.3.5** Signal disagreement (mucus vs temp) → both in `flags`. AC: fixture passes.
+- [x] **4.3.1** Anovulatory (no shift) → `isAnovulatory:true`, no throw. AC: fixture passes.
+- [x] **4.3.2** Missing days: compute if ≥ minDataPoints else null + "low_data" flag. AC: fixture passes.
+- [x] **4.3.3** Disturbed readings excluded from coverline window per config. AC: fixture passes.
+- [x] **4.3.4** False shift (cross then drop) invalidated; scan continues. AC: fixture passes.
+- [x] **4.3.5** Signal disagreement (mucus vs temp) → both in `flags`. AC: fixture passes.
+- [x] **4.3.6** Live cycle (`todayCycleDay` given) → `shift_pending` / `peak_pending`; nothing provisional is ever exposed; prefix-invariance test (ovulation day null until the confirmation day, then never changes). AC: fixture passes.
 
 ### Task 4.4 — Copy & tests `[test]`
-- [ ] **4.4.0** **Gate:** get Sivi's sign-off on the fixture set (input cycle data → expected coverline / ovulation day / peak day) BEFORE writing tests. This turns her method into the spec. AC: approved fixtures checked into the repo.
-- [ ] **4.4.1** `copy.ts` content map for states (anovulatory, low_data, disagreement). AC: no inline state strings in logic.
-- [ ] **4.4.2** Unit tests + fixtures: clean, anovulatory, disturbed, low-data, false-shift. AC: all green.
-- [ ] **4.4.3** Test that changing a `CYCLE_RULES` value changes output. AC: proves configurability.
+- [ ] **4.4.0** **Gate:** get Sivi's sign-off on the fixture set (input cycle data → expected coverline / ovulation day / peak day). Synthetic fixtures are written alongside 4.2/4.3 per the adopted plan; her answers to the engine-plan §11 questions finalize their expectations (and add `sivi-sample` if she approves a de-identified copy). This turns her method into the spec. AC: approved fixtures checked into the repo.
+- [x] **4.4.1** `copy.ts` content map for states (anovulatory, low_data, disagreement). AC: no inline state strings in logic.
+- [~] **4.4.2** Unit tests + typed `.ts` fixtures: clean, anovulatory, disturbed, low-data, false-shift, disagreement, decimal-boundary, live-pending, mucus-only, temp-only. AC: all green.
+- [x] **4.4.3** Test that changing a `CYCLE_RULES` value changes output. AC: proves configurability.
 
 **Task 4 done when:** all fixtures pass, engine has zero DB/HTTP imports, rules editable in one place.
 
