@@ -74,18 +74,18 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Task 3 — AUTH (AWS Cognito)
 
 ### Task 3.1 — Cognito + API guard `[api]`
-- [ ] **3.1.1** Document Cognito user pool setup (email+password) in README/.env.example. AC: steps written.
-- [ ] **3.1.2** Add JWT-verify middleware (validate Cognito token, attach userId from `sub`). AC: invalid token → 401.
-- [ ] **3.1.3** Add `requireAuth` guard usable per-route. AC: guarded test route rejects anon.
-- [ ] **3.1.4** On first authed request, upsert `User` by `cognitoSub`. AC: row created once.
-- [ ] **3.1.5** Implement `GET /me` (returns/creates profile). AC: returns user JSON.
+- [x] **3.1.1** Document Cognito user pool setup (email+password) in README/.env.example. AC: steps written.
+- [x] **3.1.2** Add JWT-verify middleware (validate Cognito token, attach userId from `sub`). AC: invalid token → 401.
+- [x] **3.1.3** Add `requireAuth` guard usable per-route. AC: guarded test route rejects anon.
+- [x] **3.1.4** On first authed request, upsert `User` by `cognitoSub`. AC: row created once.
+- [x] **3.1.5** Implement `GET /me` (returns/creates profile). AC: returns user JSON.
 
 ### Task 3.2 — Frontend auth `[web]`
-- [ ] **3.2.1** Add auth SDK/config; sign-up UI (on-brand, mobile-first). AC: can create account.
-- [ ] **3.2.2** Log-in UI + store token; attach token to API client. AC: `/me` succeeds after login.
-- [ ] **3.2.3** Log-out; clear token/state. AC: returns to login.
-- [ ] **3.2.4** Route guard: anon → login; authed → shell. AC: guarded routes protected.
-- [ ] **3.2.5** Loading + error states on auth forms (toasts). AC: bad creds show friendly error.
+- [x] **3.2.1** Add auth SDK/config; sign-up UI (on-brand, mobile-first). AC: can create account.
+- [x] **3.2.2** Log-in UI + store token; attach token to API client. AC: `/me` succeeds after login.
+- [x] **3.2.3** Log-out; clear token/state. AC: returns to login.
+- [x] **3.2.4** Route guard: anon → login; authed → shell. AC: guarded routes protected.
+- [x] **3.2.5** Loading + error states on auth forms (toasts). AC: bad creds show friendly error.
 
 **Task 3 done when:** full sign up → login → guarded home → logout works; protected API enforced.
 

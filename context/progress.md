@@ -10,8 +10,8 @@ Last updated: 2026-09-17
 ---
 
 ## Currently working on
-- Task: **Task 2 complete, awaiting commit approval.** Next: **3.1.1** Cognito setup docs (no checkpoint needed), then **3.1.2+ BLOCKED** on founder checkpoint: Cognito user pool + app client IDs in both .env files. Still open: 1.2.7 Sentry (founder DSNs or skip).
-- Branch: `feature/database` (Task 2). `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding` are fully merged — delete on founder OK.
+- Task: **Task 3 complete, awaiting commit approval.** Next: **4.1.1** cycle engine structure (no checkpoint until 4.4.0 Sivi fixtures) (real pool IDs in /api/.env + /web/.env.local). Once present: verify sign-up → confirm → login → /me → sign-out end to end, tick 3.1.4–3.2.5, then commit Task 3. Still open: 1.2.7 Sentry (founder DSNs or skip).
+- Branch: `feature/auth` (Task 3). `feature/database` merged. `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding` are fully merged — delete on founder OK.
 - Notes: Task 1 merged to main (2c042d2), CI green and pushed to origin (github.com/abirami2k1/knowHer). First CI run red as expected (no apps yet). 1.2.6 (hardening) + 1.2.7 (Sentry, checkpoint) added to TASKLIST per founder OK. Project moved to Node 24 LTS on 2026-09-17 (Node 20 is EOL; Vitest 5 requires ≥ 22); .nvmrc = 24. docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
 
 ---
@@ -19,7 +19,7 @@ Last updated: 2026-09-17
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
 - [x] Task 2 — Database schema & migrations
-- [ ] Task 3 — Auth (Cognito)
+- [x] Task 3 — Auth (Cognito)
 - [ ] Task 4 — Cycle rule engine (pure + tests)
 - [ ] Task 5 — Onboarding
 - [ ] Task 6 — Daily Log + Period Tracker
@@ -72,12 +72,27 @@ Last updated: 2026-09-17
 - [x] 2.3.1 migration 20260918024515_init applied; migrate:status in sync
 - [x] 2.3.2 seed: 6 KnowledgeArticles + 1 draft BlogPost (placeholder author); idempotent
 
-_(Add Task 3+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 3 — Auth
+- [x] 3.1.1 Cognito setup steps in README + .env.example
+- [x] 3.1.2 JWT-verify middleware (aws-jwt-verify, access token) — missing/garbage token → 401 verified
+- [x] 3.1.3 requireAuth guard — GET /me rejects anon (tests + curl)
+- [x] 3.1.4 upsert User by cognitoSub — exactly one row after repeated /me calls (verified in Postgres)
+- [x] 3.1.5 GET /me — 200 with profile DTO using a real Cognito access token
+- [x] 3.2.1 sign-up UI (+ confirm password, confirm-code step) — founder created a real account
+- [x] 3.2.2 log-in UI + Bearer token on API client — /me succeeds after login; email shown from ID token
+- [x] 3.2.3 sign-out (Profile) — clears session, returns to /login (founder verified)
+- [x] 3.2.4 route guard — anon → /login; authed → shell (Profile renders inside shell)
+- [x] 3.2.5 loading/error states — wrong password shows the friendly toast; pool misconfig errors surface plainly
+
+_(Add Task 4+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-17 — Task 3 verified end to end against the dev pool us-east-2 (SPA app client without a secret — the wizard's default "Traditional web application" type generates one, which the browser SDK cannot use; a probe with ForgotPassword on a nonexistent address reveals a secret requirement). Sign-up → email code → login → /me (one User row) → Profile (email from ID token) → sign-out → wrong-password toast → login all confirmed by the founder in the browser pane. Added confirm-password field. Two dead app clients (knowher-web, knowher-web-spa) remain in the pool; the latter's secret was pasted in chat — delete both.
+- 2026-09-17 — Task 3 code built ahead of the checkpoint. api: CONFIG.cognito (lazy), middleware/auth.ts `requireAuth` (aws-jwt-verify access-token verifier built on first use; Bearer parse → verify → upsert User by sub → req.user; any failure → 401 `unauthorized`, token never logged), services/users.ts (upsert + toProfile DTO), GET /me, src/types/express.d.ts, shared `UserProfile` + enum unions; vitest.config.ts carries placeholder pool IDs so the verifier can be constructed for parse-rejection tests (no network); 18 tests green. web: amazon-cognito-identity-js pool factory (null → honest "not set up" screen, never a fake login), AuthProvider (session restore, SRP sign-in, sign-up + confirm + resend, sign-out) with the context object in auth-context.ts for fast refresh, API client attaches a fresh access token per request via setAccessTokenProvider, /login + /signup pages, RequireAuth guard (anon → /login with return path), Profile shows /me + sign-out, sonner toasts, ui/Button + ui/Field primitives. Vite `define: { global: 'globalThis' }` fixes the SDK's Node `global` reference. Bundle now 608 kB (190 kB gzip) — revisit code-splitting in Task 13.
+- 2026-09-17 — 3.1.1 done: README section "Auth: AWS Cognito user pool" (SPA app client, email-only sign-in, SRP + refresh flows, IDs → both env files); .env.example comments point to it.
 - 2026-09-17 — Task 2 done. Local DB: system PostgreSQL 17 owns 5432, so the compose container now publishes on host port 5433 (compose, .env.example, README updated). Prisma **7.10** (CLI `latest` tag is an 8.0 RC — pinned to 7): `prisma.config.ts` holds the datasource URL, generator `prisma-client` → `api/src/generated/` (gitignored, `npm run build` regenerates), client via `@prisma/adapter-pg`. Schema = implementation/schema.prisma verbatim (models/fields/enums identical), built in 7 validated steps. Migration `init` applied; DATE / numeric(5,2) / unique + index DDL verified in Postgres. Seed (`npm run seed` → `prisma db seed` → tsx prisma/seed.ts): 6 articles (basics ×2, cycle ×3, supporters ×1) + 1 draft post by a seed-only author; runs twice unchanged. CI: api job sets a placeholder DATABASE_URL so `prisma generate` loads; CONFIG.databaseUrl is a lazy getter so HTTP tests need no DB. Known: `npm audit` reports mysql2 (transitive of the prisma CLI, dev-only, unused).
 - 2026-09-17 — 1.1.4 done: CI green on main (Prettier + web lint/build + api lint/build/test) at 2c042d2. Task 1 complete.
 - 2026-09-17 — 1.4.2 done: vite-plugin-pwa (autoUpdate, app-shell precache), manifest (standalone, theme #B22222, 192/512/maskable icons — placeholder art), SW verified active on the production preview.

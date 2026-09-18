@@ -2,7 +2,7 @@
   "name": "knowher-api",
   "private": true,
   "version": "0.0.0",
-  "description": "knowHer API \u2014 Node + Express + TypeScript. All business logic and cycle math live here.",
+  "description": "knowHer API — Node + Express + TypeScript. All business logic and cycle math live here.",
   "main": "dist/api/src/index.js",
   "engines": {
     "node": ">=24"
@@ -22,6 +22,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "aws-jwt-verify": "^5.2.1",
     "cors": "^2.8.6",
     "dotenv": "^18.0.0",
     "express": "^5.2.1",

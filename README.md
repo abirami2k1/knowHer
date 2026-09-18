@@ -68,6 +68,30 @@ Schema changes go through Prisma migrations, never `prisma db push` and never ha
 
 The generated client (`api/src/generated/`) is gitignored; `npm run build` regenerates it. Run `npm run generate` after cloning if you only need `npm run dev`.
 
+## Auth: AWS Cognito user pool (one-time setup, done by hand in the console)
+
+knowHer signs users up and in with an Amazon Cognito user pool: email + password, no social logins, no Hosted UI. The web app talks to Cognito directly; the API only verifies the JWTs Cognito issues. Create one pool for development now and a separate one for production later.
+
+1. AWS Console → **Amazon Cognito** → **User pools** → **Create user pool**.
+2. **Application type:** _Single-page application (SPA)_. **Name your application:** `knowher-web`. (SPA creates a public app client with no client secret, which is what the browser SDK needs.)
+3. **Sign-in identifiers:** _Email_ only. **Required attributes for sign-up:** _email_ only. Leave the return URL empty (Hosted UI is not used).
+4. **Create user pool**. Then open the new pool and collect two values:
+   - **User pool ID** — on the pool's overview page, looks like `us-east-1_AbCdEfGhI`.
+   - **App client ID** — under _App clients_ → `knowher-web`, a 26-character string. Confirm _Client secret_ shows none.
+5. In that app client's **Authentication flows**, make sure `ALLOW_USER_SRP_AUTH` and `ALLOW_REFRESH_TOKEN_AUTH` are enabled (the SPA preset does this). Nothing else is needed.
+6. Under the pool's **Sign-up** settings, leave self-registration enabled and email verification on (Cognito sends the code from its own address — fine for development; production should send through SES).
+7. Leave the password policy, MFA (off) and token lifetimes at their defaults for now.
+
+Paste the two IDs and the region into both env files:
+
+| `/api/.env`            | `/web/.env.local`           |
+| ---------------------- | --------------------------- |
+| `AWS_REGION`           | `VITE_AWS_REGION`           |
+| `COGNITO_USER_POOL_ID` | `VITE_COGNITO_USER_POOL_ID` |
+| `COGNITO_CLIENT_ID`    | `VITE_COGNITO_CLIENT_ID`    |
+
+Pool and client IDs are public identifiers, not secrets, but they still live in env files so dev and prod pools never mix. The API never holds AWS credentials for auth: it verifies tokens against the pool's public JWKS.
+
 ## Local database
 
 ```bash

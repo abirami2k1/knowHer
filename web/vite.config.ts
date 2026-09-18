@@ -38,6 +38,8 @@ export default defineConfig({
       },
     }),
   ],
+  // amazon-cognito-identity-js reaches for Node's `global`; point it at the browser global.
+  define: { global: 'globalThis' },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

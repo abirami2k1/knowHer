@@ -2,6 +2,14 @@ import type { ApiError, ApiResponse } from '@shared/types';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000';
 
+type AccessTokenProvider = () => Promise<string | null>;
+let accessTokenProvider: AccessTokenProvider | null = null;
+
+/** Registered by AuthProvider. Called before every request so tokens are always fresh. */
+export function setAccessTokenProvider(provider: AccessTokenProvider | null): void {
+  accessTokenProvider = provider;
+}
+
 /** Thrown when the API answers with { success:false } or cannot be reached. */
 export class ApiClientError extends Error {
   constructor(
@@ -16,9 +24,11 @@ export class ApiClientError extends Error {
 
 /**
  * Thin typed fetch wrapper. Unwraps the { success, data, error } envelope so
- * callers get `T` or a thrown ApiClientError. The Cognito token is attached here in Task 3.
+ * callers get `T` or a thrown ApiClientError. Attaches the Cognito access token
+ * as a Bearer header whenever a session exists.
  */
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = accessTokenProvider ? await accessTokenProvider() : null;
   let response: Response;
   try {
     response = await fetch(`${BASE_URL}${path}`, {
@@ -26,6 +36,7 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
       headers: {
         Accept: 'application/json',
         ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...init.headers,
       },
     });

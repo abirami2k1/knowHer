@@ -33,6 +33,17 @@ export const CONFIG = {
   isProduction: process.env.NODE_ENV === 'production',
   /** JSON bodies above this are rejected with 413 — daily logs are tiny. */
   jsonBodyLimit: '100kb',
-  /** Baseline per-IP limit; auth-adjacent routes get a stricter bucket in Task 3. */
+  /** Baseline per-IP limit. Sign-up/login never touch the API (browser → Cognito). */
   rateLimit: { windowMs: 15 * 60 * 1000, limit: 300 },
+  /**
+   * Cognito user pool the API trusts. Lazy for the same reason as databaseUrl:
+   * only the auth middleware needs it, so /health and its tests boot without it.
+   */
+  get cognito(): { region: string; userPoolId: string; clientId: string } {
+    return {
+      region: envRequired('AWS_REGION'),
+      userPoolId: envRequired('COGNITO_USER_POOL_ID'),
+      clientId: envRequired('COGNITO_CLIENT_ID'),
+    };
+  },
 } as const;

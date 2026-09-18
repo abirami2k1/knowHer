@@ -6,6 +6,7 @@ import { CONFIG } from './config';
 import { fail } from './lib/respond';
 import { errorHandler, notFoundHandler } from './middleware/error-handler';
 import { healthRouter } from './routes/health';
+import { meRouter } from './routes/me';
 
 /**
  * Builds the Express app without binding a port, so tests can mount it
@@ -35,6 +36,7 @@ export function createApp() {
   app.use(express.json({ limit: CONFIG.jsonBodyLimit }));
 
   app.use(healthRouter);
+  app.use(meRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
