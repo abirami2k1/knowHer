@@ -10,15 +10,15 @@ Last updated: 2026-09-17
 ---
 
 ## Currently working on
-- Task: **Task 1 complete** (only 1.2.7 Sentry open — human checkpoint: founder provides DSNs or decides to skip). Next: **2.1.1** Prisma init — BLOCKED on founder checkpoint (`docker compose up -d db` + `DATABASE_URL` in /api/.env).
-- Branch: `feature/api-skeleton` (Task 1.2 milestone; `feature/repo-tooling` kept until 1.1.4 is ticked)
+- Task: **Task 2 complete, awaiting commit approval.** Next: **3.1.1** Cognito setup docs (no checkpoint needed), then **3.1.2+ BLOCKED** on founder checkpoint: Cognito user pool + app client IDs in both .env files. Still open: 1.2.7 Sentry (founder DSNs or skip).
+- Branch: `feature/database` (Task 2). `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding` are fully merged — delete on founder OK.
 - Notes: Task 1 merged to main (2c042d2), CI green and pushed to origin (github.com/abirami2k1/knowHer). First CI run red as expected (no apps yet). 1.2.6 (hardening) + 1.2.7 (Sentry, checkpoint) added to TASKLIST per founder OK. Project moved to Node 24 LTS on 2026-09-17 (Node 20 is EOL; Vitest 5 requires ≥ 22); .nvmrc = 24. docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
 
 ---
 
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
-- [ ] Task 2 — Database schema & migrations
+- [x] Task 2 — Database schema & migrations
 - [ ] Task 3 — Auth (Cognito)
 - [ ] Task 4 — Cycle rule engine (pure + tests)
 - [ ] Task 5 — Onboarding
@@ -57,12 +57,28 @@ Last updated: 2026-09-17
 - [x] 1.4.1 shared ApiResponse type
 - [x] 1.4.2 PWA manifest + SW
 
-_(Add Task 2+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 2 — Database
+- [x] 2.1.1 Prisma 7 init (prisma.config.ts, pg adapter, client singleton)
+- [x] 2.1.2 migrate:dev / migrate:deploy / migrate:status (+ generate, seed) scripts
+- [x] 2.1.3 migrations-only rule documented in README
+- [x] 2.1.4 date rule: coding-standards (already present) + schema header/field comments
+- [x] 2.2.1 enums (Flow, CervicalMucus, CervixPosition + AgeBand, Condition, Goal, Role, Audience)
+- [x] 2.2.2 User
+- [x] 2.2.3 Cycle (expectedOvulation intentionally NOT a column — computed on read, D4)
+- [x] 2.2.4 DailyLog (no cycleId — D2; symptoms String[] per implementation plan)
+- [x] 2.2.5 CycleSummary
+- [x] 2.2.6 BlogPost + KnowledgeArticle
+- [x] 2.2.7 relations + indexes (DailyLog(userId,date) unique, Cycle(userId,startDate), CycleSummary(userId,cycleStartDate) unique)
+- [x] 2.3.1 migration 20260918024515_init applied; migrate:status in sync
+- [x] 2.3.2 seed: 6 KnowledgeArticles + 1 draft BlogPost (placeholder author); idempotent
+
+_(Add Task 3+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-17 — Task 2 done. Local DB: system PostgreSQL 17 owns 5432, so the compose container now publishes on host port 5433 (compose, .env.example, README updated). Prisma **7.10** (CLI `latest` tag is an 8.0 RC — pinned to 7): `prisma.config.ts` holds the datasource URL, generator `prisma-client` → `api/src/generated/` (gitignored, `npm run build` regenerates), client via `@prisma/adapter-pg`. Schema = implementation/schema.prisma verbatim (models/fields/enums identical), built in 7 validated steps. Migration `init` applied; DATE / numeric(5,2) / unique + index DDL verified in Postgres. Seed (`npm run seed` → `prisma db seed` → tsx prisma/seed.ts): 6 articles (basics ×2, cycle ×3, supporters ×1) + 1 draft post by a seed-only author; runs twice unchanged. CI: api job sets a placeholder DATABASE_URL so `prisma generate` loads; CONFIG.databaseUrl is a lazy getter so HTTP tests need no DB. Known: `npm audit` reports mysql2 (transitive of the prisma CLI, dev-only, unused).
 - 2026-09-17 — 1.1.4 done: CI green on main (Prettier + web lint/build + api lint/build/test) at 2c042d2. Task 1 complete.
 - 2026-09-17 — 1.4.2 done: vite-plugin-pwa (autoUpdate, app-shell precache), manifest (standalone, theme #B22222, 192/512/maskable icons — placeholder art), SW verified active on the production preview.
 - 2026-09-17 — 1.4.1 done: /shared/types.ts (ApiResponse<T>, ApiError) imported by api (respond.ts; tsconfig rootDir '..' so dist = dist/api/src + dist/shared) and web (@shared alias).

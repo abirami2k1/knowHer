@@ -36,3 +36,6 @@ web/.vite/
 
 # vite-plugin-pwa dev output
 web/dev-dist/
+
+# Prisma generated client (regenerate with `npm run generate` in /api)
+api/src/generated/

@@ -49,23 +49,23 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Task 2 — DATABASE
 
 ### Task 2.1 — Prisma setup `[db]`
-- [ ] **2.1.1** Install & init Prisma in `/api`; set `DATABASE_URL`. AC: `prisma` CLI runs.
-- [ ] **2.1.2** Add scripts `migrate:dev`, `migrate:deploy`, `migrate:status`. AC: scripts run.
-- [ ] **2.1.3** Document: migrations only, never `db push` (in README). AC: note present.
-- [ ] **2.1.4** `[infra]` Document the date rule: `DailyLog.date` and all cycle boundary dates are plain local **calendar dates** (`YYYY-MM-DD`) chosen client-side — never derived from a UTC timestamp server-side. Zod validates the shape; Prisma uses `@db.Date`. AC: rule added to coding-standards + schema comment.
+- [x] **2.1.1** Install & init Prisma in `/api`; set `DATABASE_URL`. AC: `prisma` CLI runs.
+- [x] **2.1.2** Add scripts `migrate:dev`, `migrate:deploy`, `migrate:status`. AC: scripts run.
+- [x] **2.1.3** Document: migrations only, never `db push` (in README). AC: note present.
+- [x] **2.1.4** `[infra]` Document the date rule: `DailyLog.date` and all cycle boundary dates are plain local **calendar dates** (`YYYY-MM-DD`) chosen client-side — never derived from a UTC timestamp server-side. Zod validates the shape; Prisma uses `@db.Date`. AC: rule added to coding-standards + schema comment.
 
 ### Task 2.2 — Schema `[db]`
-- [ ] **2.2.1** Define enums: `Flow`, `CervicalMucus(dry|sticky|watery|eggwhite)`, `CervixPosition(F|M|S)`. AC: schema validates.
-- [ ] **2.2.2** Define `User` model (per PRD §7). AC: validates.
-- [ ] **2.2.3** Define `Cycle` model (incl. coverlineF, ovulationDay, peakDay, lutealLength, isAnovulatory, expectedOvulation, confidenceNote). AC: validates.
-- [ ] **2.2.4** Define `DailyLog` model (raw fields incl. bbtF, tempTakenAt, isDisturbed, disturbedReason, mucus, cervix, mood, energy, symptoms json). Keyed by `userId+date`; **no `cycleId` FK** — cycle membership is derived from `Cycle` date ranges at query time. AC: validates.
-- [ ] **2.2.5** Define `CycleSummary` model (incl. symptomAggregate, energyAggregate). AC: validates.
-- [ ] **2.2.6** Define `BlogPost` + `KnowledgeArticle` models. AC: validates.
-- [ ] **2.2.7** Add relations + indexes (`DailyLog(userId,date)` unique, `Cycle(userId,startDate)`). AC: validates.
+- [x] **2.2.1** Define enums: `Flow`, `CervicalMucus(dry|sticky|watery|eggwhite)`, `CervixPosition(F|M|S)`. AC: schema validates.
+- [x] **2.2.2** Define `User` model (per PRD §7). AC: validates.
+- [x] **2.2.3** Define `Cycle` model (incl. coverlineF, ovulationDay, peakDay, lutealLength, isAnovulatory, expectedOvulation, confidenceNote). AC: validates.
+- [x] **2.2.4** Define `DailyLog` model (raw fields incl. bbtF, tempTakenAt, isDisturbed, disturbedReason, mucus, cervix, mood, energy, symptoms json). Keyed by `userId+date`; **no `cycleId` FK** — cycle membership is derived from `Cycle` date ranges at query time. AC: validates.
+- [x] **2.2.5** Define `CycleSummary` model (incl. symptomAggregate, energyAggregate). AC: validates.
+- [x] **2.2.6** Define `BlogPost` + `KnowledgeArticle` models. AC: validates.
+- [x] **2.2.7** Add relations + indexes (`DailyLog(userId,date)` unique, `Cycle(userId,startDate)`). AC: validates.
 
 ### Task 2.3 — Migrate & seed `[db]`
-- [ ] **2.3.1** Run first `migrate:dev`; commit migration. AC: DB has tables; `migrate:status` in sync.
-- [ ] **2.3.2** Write seed: a few KnowledgeArticles + 1 BlogPost (no users). AC: `npm run seed` populates.
+- [x] **2.3.1** Run first `migrate:dev`; commit migration. AC: DB has tables; `migrate:status` in sync.
+- [x] **2.3.2** Write seed: a few KnowledgeArticles + 1 BlogPost (no users). AC: `npm run seed` populates.
 
 **Task 2 done when:** schema migrated cleanly, client generates, seed runs.
 

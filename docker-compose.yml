@@ -5,8 +5,11 @@
 # Stop:    docker compose down
 # Reset:   docker compose down -v   (drops the local data volume)
 #
+# Published on host port 5433 (not 5432) so it never clashes with a Postgres
+# already installed on the machine. Inside the container Postgres still uses 5432.
+#
 # Matching DATABASE_URL for /api/.env:
-#   postgresql://knowher:knowher@localhost:5432/knowher?schema=public
+#   postgresql://knowher:knowher@localhost:5433/knowher?schema=public
 
 name: knowher
 
@@ -20,7 +23,7 @@ services:
       POSTGRES_PASSWORD: knowher
       POSTGRES_DB: knowher
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
       - knowher-pgdata:/var/lib/postgresql/data
     healthcheck:

@@ -2,6 +2,13 @@ import { config as loadEnv } from 'dotenv';
 
 loadEnv({ quiet: true });
 
+function envRequired(name: string): string {
+  const raw = process.env[name];
+  if (raw === undefined || raw === '')
+    throw new Error(`Env ${name} is required (see .env.example)`);
+  return raw;
+}
+
 function envNumber(name: string, fallback: number): number {
   const raw = process.env[name];
   if (raw === undefined || raw === '') return fallback;
@@ -13,6 +20,14 @@ function envNumber(name: string, fallback: number): number {
 /** All runtime configuration, read once from the environment. Never read process.env elsewhere. */
 export const CONFIG = {
   port: envNumber('PORT', 4000),
+  /**
+   * Postgres connection string (local: docker-compose.yml on port 5433; prod: RDS secret).
+   * A getter, so only code that actually opens a connection (lib/prisma.ts) requires it —
+   * the HTTP layer and its tests boot without a database.
+   */
+  get databaseUrl(): string {
+    return envRequired('DATABASE_URL');
+  },
   /** Exact web-app origin allowed by CORS. No wildcard, ever (architecture §5b). */
   webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:5173',
   isProduction: process.env.NODE_ENV === 'production',

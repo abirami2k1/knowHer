@@ -39,6 +39,11 @@ jobs:
     defaults:
       run:
         working-directory: ${{ matrix.app }}
+    env:
+      # `prisma generate` (part of the api build) loads prisma.config.ts, which requires a
+      # DATABASE_URL to be set even though generate never connects. Placeholder only — CI has no
+      # database yet; when integration tests arrive, point this at a Postgres service container.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

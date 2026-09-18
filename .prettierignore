@@ -16,3 +16,6 @@ implementation/*.md
 
 # Prisma schema is formatted by `prisma format`, not Prettier
 *.prisma
+
+# Prisma generated client
+api/src/generated
