@@ -22,7 +22,7 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 - [~] **1.1.4** `[infra]` Add GitHub Actions CI: lint + build (web & api) + engine tests on every push/PR. AC: pipeline green on main.
 
 ### Task 1.2 — Backend skeleton `[api]`
-- [ ] **1.2.1** Init Node + Express + TypeScript (strict). AC: `npm run build` compiles.
+- [x] **1.2.1** Init Node + Express + TypeScript (strict). AC: `npm run build` compiles.
 - [ ] **1.2.2** Add `npm run dev` (ts-node/tsx, port 4000) and `npm run lint`. AC: dev server boots.
 - [ ] **1.2.3** Add `{ success, data, error }` response helper + typed wrapper. AC: helper unit-importable.
 - [ ] **1.2.4** Implement `GET /health` → `{ success:true, data:{status:"ok"} }`. AC: 200 in browser/curl.
