@@ -10,9 +10,9 @@ Last updated: 2026-09-17
 ---
 
 ## Currently working on
-- Task: **1.1.2** — done, awaiting commit approval. Next: **1.1.3** .env.example in /api and /web
+- Task: **1.1.3** — done, awaiting commit approval. Next: **1.1.4** GitHub Actions CI
 - Branch: `feature/repo-tooling`
-- Notes: 1.1.1 merged to main (02004af). Local machine has Node 24 (plan says Node 20 LTS; .nvmrc set to 20). docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
+- Notes: 1.1.1 + 1.1.2 merged to main (c3c8e70). Local machine has Node 24 (plan says Node 20 LTS; .nvmrc set to 20). docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
 
 ---
 
@@ -39,7 +39,7 @@ Last updated: 2026-09-17
 ### Task 1 — Scaffolding
 - [x] 1.1.1 root repo + folders
 - [x] 1.1.2 editorconfig + prettier
-- [ ] 1.1.3 .env.example (both apps)
+- [x] 1.1.3 .env.example (both apps)
 - [ ] 1.2.1 Express+TS init
 - [ ] 1.2.2 dev + lint scripts
 - [ ] 1.2.3 response helper
@@ -60,6 +60,7 @@ _(Add Task 2+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-17 — 1.1.3 done: api/.env.example (PORT, WEB_ORIGIN, DATABASE_URL, AWS_REGION, COGNITO_*; SENTRY/S3/VAPID commented for later) + web/.env.example (VITE_API_URL, VITE_AWS_REGION, VITE_COGNITO_*); README Environment section.
 - 2026-09-17 — 1.1.2 done: root .editorconfig, .prettierrc (singleQuote, printWidth 100), .prettierignore (founder docs + prisma excluded), root package.json with prettier 3.9.8 pinned + format/format:check scripts; README + compose reformatted.
 - 2026-09-17 — 1.1.1 done: git init (main) + branch feature/repo-tooling; /web /api /shared; README; .gitignore; .nvmrc; docker-compose.yml (Postgres 16, local only).
 - (start) Project docs + task list created.

@@ -41,6 +41,16 @@ Backend (`/api`):
 | `npm run migrate:dev`    | Create/apply a migration (development) |
 | `npm run migrate:deploy` | Apply migrations (production)          |
 
+## Environment
+
+Each app reads its own env file. Copy the example, then fill in values:
+
+```bash
+cp api/.env.example api/.env && cp web/.env.example web/.env.local
+```
+
+The example files document every key and hold placeholders only. Real `.env*` files are gitignored; anything prefixed `VITE_` ships in the public web bundle, so it must never be a secret.
+
 ## Local database
 
 ```bash
