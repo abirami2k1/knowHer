@@ -1,10 +1,6 @@
-import { config as loadEnv } from 'dotenv';
 import { createApp } from './app';
+import { CONFIG } from './config';
 
-loadEnv({ quiet: true });
-
-const PORT = Number(process.env.PORT ?? 4000);
-
-createApp().listen(PORT, () => {
-  console.log(`knowHer API listening on http://localhost:${PORT}`);
+createApp().listen(CONFIG.port, () => {
+  console.log(`knowHer API listening on http://localhost:${CONFIG.port}`);
 });

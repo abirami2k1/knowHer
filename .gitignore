@@ -30,3 +30,9 @@ web/.vite/
 
 # Local data
 *.local
+
+# Claude Code local tooling
+.claude/launch.json
+
+# vite-plugin-pwa dev output
+web/dev-dist/

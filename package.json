@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "description": "Root tooling shared by /web and /api (Prettier). The apps live in /web and /api.",
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "scripts": {
     "format": "prettier --write .",

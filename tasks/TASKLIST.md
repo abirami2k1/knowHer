@@ -24,23 +24,23 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ### Task 1.2 — Backend skeleton `[api]`
 - [x] **1.2.1** Init Node + Express + TypeScript (strict). AC: `npm run build` compiles.
 - [x] **1.2.2** Add `npm run dev` (ts-node/tsx, port 4000) and `npm run lint`. AC: dev server boots.
-- [ ] **1.2.3** Add `{ success, data, error }` response helper + typed wrapper. AC: helper unit-importable.
-- [ ] **1.2.4** Implement `GET /health` → `{ success:true, data:{status:"ok"} }`. AC: 200 in browser/curl.
-- [ ] **1.2.5** Add centralized error-handling middleware. AC: thrown error returns shaped JSON, no stack leak.
-- [ ] **1.2.6** Production hardening (architecture §5b): CORS locked to `WEB_ORIGIN` (no wildcard), `helmet`, JSON body limit (~100 kB), `express-rate-limit` baseline. AC: request from a non-allowed origin gets no CORS headers; oversize body → 413; security headers present.
+- [x] **1.2.3** Add `{ success, data, error }` response helper + typed wrapper. AC: helper unit-importable.
+- [x] **1.2.4** Implement `GET /health` → `{ success:true, data:{status:"ok"} }`. AC: 200 in browser/curl.
+- [x] **1.2.5** Add centralized error-handling middleware. AC: thrown error returns shaped JSON, no stack leak.
+- [x] **1.2.6** Production hardening (architecture §5b): CORS locked to `WEB_ORIGIN` (no wildcard), `helmet`, JSON body limit (~100 kB), `express-rate-limit` baseline. AC: request from a non-allowed origin gets no CORS headers; oversize body → 413; security headers present.
 - [ ] **1.2.7** `[infra]` Error monitoring (Sentry or similar) on api + web with scrubbing so no health fields ever leave in an event. **Human checkpoint:** blocked until the founder provides DSNs or decides to skip error monitoring for MVP. Never mock.
 
 ### Task 1.3 — Frontend skeleton `[web]`
-- [ ] **1.3.1** Init React + Vite + TypeScript (strict). AC: `npm run build` compiles.
-- [ ] **1.3.2** Install & configure Tailwind v4 via `@theme` in `globals.css` with brand tokens (primary #B22222 etc). AC: a tokened color renders.
-- [ ] **1.3.3** Install React Router; add routes `/`, `/log`, `/learn`, `/profile` with placeholder pages. AC: routes navigate.
-- [ ] **1.3.4** Build **mobile-first bottom nav** (Home · Log · Learn · Profile); desktop = centered narrow column. AC: nav works on mobile viewport.
-- [ ] **1.3.5** Install Framer Motion; add one subtle page transition. AC: transition visible.
-- [ ] **1.3.6** Create typed API client (`web/src/lib/api/`) with base URL from env + health call on Home. AC: Home shows API health status.
+- [x] **1.3.1** Init React + Vite + TypeScript (strict). AC: `npm run build` compiles.
+- [x] **1.3.2** Install & configure Tailwind v4 via `@theme` in `globals.css` with brand tokens (primary #B22222 etc). AC: a tokened color renders.
+- [x] **1.3.3** Install React Router; add routes `/`, `/log`, `/learn`, `/profile` with placeholder pages. AC: routes navigate.
+- [x] **1.3.4** Build **mobile-first bottom nav** (Home · Log · Learn · Profile); desktop = centered narrow column. AC: nav works on mobile viewport.
+- [x] **1.3.5** Install Framer Motion; add one subtle page transition. AC: transition visible.
+- [x] **1.3.6** Create typed API client (`web/src/lib/api/`) with base URL from env + health call on Home. AC: Home shows API health status.
 
 ### Task 1.4 — Shared types & PWA
-- [ ] **1.4.1** `[shared]` Add `ApiResponse<T>` type; import in both apps. AC: both compile using it.
-- [ ] **1.4.2** `[web]` Add PWA manifest + icons + service worker (app-shell cache). AC: app is installable; Lighthouse PWA installable check passes.
+- [x] **1.4.1** `[shared]` Add `ApiResponse<T>` type; import in both apps. AC: both compile using it.
+- [x] **1.4.2** `[web]` Add PWA manifest + icons + service worker (app-shell cache). AC: app is installable; Lighthouse PWA installable check passes.
 
 **Task 1 done when:** both apps run via `npm run dev`, health-check works end-to-end, shell + nav render, PWA installable, both builds pass.
 

@@ -19,18 +19,19 @@ implementation/  Implementation plan + target Prisma schema
 
 ## Prerequisites
 
-- Node 20 LTS (see `.nvmrc`) and npm
+- Node 24 LTS (see `.nvmrc`) and npm
 - Docker Desktop (local PostgreSQL only — production uses AWS RDS)
 
 ## Commands
 
 Frontend (`/web`):
 
-| Command         | What it does                        |
-| --------------- | ----------------------------------- |
-| `npm run dev`   | Dev server at http://localhost:5173 |
-| `npm run build` | Production build                    |
-| `npm run lint`  | Lint                                |
+| Command           | What it does                                                               |
+| ----------------- | -------------------------------------------------------------------------- |
+| `npm run dev`     | Dev server at http://localhost:5173                                        |
+| `npm run build`   | Production build                                                           |
+| `npm run lint`    | Lint                                                                       |
+| `npm run preview` | Serve the production build (PWA + service worker) at http://localhost:4173 |
 
 Backend (`/api`):
 
@@ -38,6 +39,8 @@ Backend (`/api`):
 | ------------------------ | -------------------------------------- |
 | `npm run dev`            | Dev server at http://localhost:4000    |
 | `npm run build`          | Compile TypeScript                     |
+| `npm run lint`           | Lint                                   |
+| `npm test`               | Unit + integration tests (Vitest)      |
 | `npm run migrate:dev`    | Create/apply a migration (development) |
 | `npm run migrate:deploy` | Apply migrations (production)          |
 

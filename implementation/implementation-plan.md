@@ -20,7 +20,7 @@ Claude Code cannot provision cloud resources or make product decisions. These ar
 
 Everything else runs locally with zero cloud dependencies. If an item needs a checkpoint that hasn't happened, the agent flags it and stops — per the "one task at a time" rule.
 
-**Tooling (so the agent never has to guess):** tests = Vitest (api) — add in 1.2.x; local DB = Postgres 16 via `docker-compose.yml` at repo root (write it in 1.1.1); package manager = npm; Node 20 LTS.
+**Tooling (so the agent never has to guess):** tests = Vitest (api) — add in 1.2.x; local DB = Postgres 16 via `docker-compose.yml` at repo root (write it in 1.1.1); package manager = npm; Node 24 LTS (was Node 20, which reached end-of-life April 2026; Vitest 5 needs ≥ 22).
 
 ---
 
