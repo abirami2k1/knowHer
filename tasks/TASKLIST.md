@@ -23,7 +23,7 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ### Task 1.2 — Backend skeleton `[api]`
 - [x] **1.2.1** Init Node + Express + TypeScript (strict). AC: `npm run build` compiles.
-- [ ] **1.2.2** Add `npm run dev` (ts-node/tsx, port 4000) and `npm run lint`. AC: dev server boots.
+- [x] **1.2.2** Add `npm run dev` (ts-node/tsx, port 4000) and `npm run lint`. AC: dev server boots.
 - [ ] **1.2.3** Add `{ success, data, error }` response helper + typed wrapper. AC: helper unit-importable.
 - [ ] **1.2.4** Implement `GET /health` → `{ success:true, data:{status:"ok"} }`. AC: 200 in browser/curl.
 - [ ] **1.2.5** Add centralized error-handling middleware. AC: thrown error returns shaped JSON, no stack leak.
