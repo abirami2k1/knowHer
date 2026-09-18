@@ -19,7 +19,7 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 - [x] **1.1.1** `[infra]` Create root repo with `/web`, `/api`, `/shared`, root `README.md`, `.gitignore`. AC: folders exist, git initialized.
 - [x] **1.1.2** `[infra]` Add root `.editorconfig` and Prettier config shared by both apps. AC: `prettier --check` runs.
 - [x] **1.1.3** `[infra]` Create `.env.example` in `/api` and `/web` with placeholder keys (DB, Cognito, S3, API URL). AC: no real secrets; documented.
-- [ ] **1.1.4** `[infra]` Add GitHub Actions CI: lint + build (web & api) + engine tests on every push/PR. AC: pipeline green on main.
+- [~] **1.1.4** `[infra]` Add GitHub Actions CI: lint + build (web & api) + engine tests on every push/PR. AC: pipeline green on main.
 
 ### Task 1.2 — Backend skeleton `[api]`
 - [ ] **1.2.1** Init Node + Express + TypeScript (strict). AC: `npm run build` compiles.
@@ -27,6 +27,8 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 - [ ] **1.2.3** Add `{ success, data, error }` response helper + typed wrapper. AC: helper unit-importable.
 - [ ] **1.2.4** Implement `GET /health` → `{ success:true, data:{status:"ok"} }`. AC: 200 in browser/curl.
 - [ ] **1.2.5** Add centralized error-handling middleware. AC: thrown error returns shaped JSON, no stack leak.
+- [ ] **1.2.6** Production hardening (architecture §5b): CORS locked to `WEB_ORIGIN` (no wildcard), `helmet`, JSON body limit (~100 kB), `express-rate-limit` baseline. AC: request from a non-allowed origin gets no CORS headers; oversize body → 413; security headers present.
+- [ ] **1.2.7** `[infra]` Error monitoring (Sentry or similar) on api + web with scrubbing so no health fields ever leave in an event. **Human checkpoint:** blocked until the founder provides DSNs or decides to skip error monitoring for MVP. Never mock.
 
 ### Task 1.3 — Frontend skeleton `[web]`
 - [ ] **1.3.1** Init React + Vite + TypeScript (strict). AC: `npm run build` compiles.

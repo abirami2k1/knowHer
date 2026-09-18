@@ -1,0 +1,54 @@
+# knowHer CI — Prettier at the root, lint + build for web and api, engine tests for api.
+# Runs on every push and pull request. Node version comes from .nvmrc.
+#
+# NOTE: the web and api jobs fail until those apps exist (Tasks 1.2 / 1.3).
+# The pipeline is expected to go green once both are scaffolded.
+
+name: CI
+
+on: [push, pull_request]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: Prettier check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+
+  app:
+    name: ${{ matrix.app }} lint + build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [web, api]
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - name: Engine tests
+        if: matrix.app == 'api'
+        run: npm test

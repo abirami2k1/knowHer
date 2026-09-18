@@ -10,6 +10,7 @@ Claude Code cannot provision cloud resources or make product decisions. These ar
 
 | Blocks | Founder provides |
 |---|---|
+| 1.2.7 | Sentry project + DSNs for api and web, or a decision to skip error monitoring for MVP |
 | 2.1.1 | Local Postgres: run the provided `docker-compose.yml` (`docker compose up -d db`), confirm `DATABASE_URL` in `/api/.env` |
 | 3.1.x | Cognito user pool + app client created in AWS console (steps documented in 3.1.1); pool/client IDs pasted into both `.env` files |
 | 4.4.0 | Sivi-approved fixture set (the 4-question agenda in Task 4 below) |
