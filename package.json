@@ -1,0 +1,16 @@
+{
+  "name": "knowher",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Root tooling shared by /web and /api (Prettier). The apps live in /web and /api.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "3.9.8"
+  }
+}

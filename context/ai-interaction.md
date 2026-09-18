@@ -32,7 +32,7 @@ Create a new branch for every task. Name branches `feature/short-name` or `fix/s
 ## Commits
 
 - Ask before committing (don't auto-commit)
-- Use conventional commit messages (`feat:`, `fix:`, `chore:`, `style:`, `refactor:`, etc.)
+- Commit messages are a short plain description of the change (e.g. `Add editorconfig and shared Prettier config`) — no `feat:`/`fix:`/`chore:` prefixes
 - Keep commits focused (one task per commit)
 - Never put "Generated with Claude" in commit messages
 

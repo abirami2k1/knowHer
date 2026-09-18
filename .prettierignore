@@ -1,0 +1,18 @@
+# Dependencies & build output
+node_modules
+dist
+build
+coverage
+*.tsbuildinfo
+
+# Lockfiles
+package-lock.json
+
+# Founder-owned prose docs — not code, leave their formatting alone
+CLAUDE.md
+context/
+tasks/
+implementation/*.md
+
+# Prisma schema is formatted by `prisma format`, not Prettier
+*.prisma

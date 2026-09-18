@@ -1,6 +1,6 @@
 # knowHer
 
-🩸 A warm, fearless period & cycle health companion. Track periods, chart ovulation the way a real practitioner teaches it, and plan life *in sync* with your hormonal rhythm.
+🩸 A warm, fearless period & cycle health companion. Track periods, chart ovulation the way a real practitioner teaches it, and plan life _in sync_ with your hormonal rhythm.
 
 Mission: **"Body feeling light and menstruating stress-free."**
 
@@ -26,20 +26,20 @@ implementation/  Implementation plan + target Prisma schema
 
 Frontend (`/web`):
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Dev server at http://localhost:5173 |
-| `npm run build` | Production build |
-| `npm run lint` | Lint |
+| Command         | What it does                        |
+| --------------- | ----------------------------------- |
+| `npm run dev`   | Dev server at http://localhost:5173 |
+| `npm run build` | Production build                    |
+| `npm run lint`  | Lint                                |
 
 Backend (`/api`):
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Dev server at http://localhost:4000 |
-| `npm run build` | Compile TypeScript |
-| `npm run migrate:dev` | Create/apply a migration (development) |
-| `npm run migrate:deploy` | Apply migrations (production) |
+| Command                  | What it does                           |
+| ------------------------ | -------------------------------------- |
+| `npm run dev`            | Dev server at http://localhost:4000    |
+| `npm run build`          | Compile TypeScript                     |
+| `npm run migrate:dev`    | Create/apply a migration (development) |
+| `npm run migrate:deploy` | Apply migrations (production)          |
 
 ## Local database
 
