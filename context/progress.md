@@ -10,14 +10,14 @@ Last updated: 2026-09-17
 ---
 
 ## Currently working on
-- Task: **Task 1 complete except 1.1.4 (CI green on main — tick after push) and 1.2.7 (Sentry — human checkpoint: founder provides DSNs or decides to skip).** Next: **2.1.1** Prisma init — BLOCKED on founder checkpoint (docker compose up -d db + DATABASE_URL in /api/.env).
+- Task: **Task 1 complete** (only 1.2.7 Sentry open — human checkpoint: founder provides DSNs or decides to skip). Next: **2.1.1** Prisma init — BLOCKED on founder checkpoint (`docker compose up -d db` + `DATABASE_URL` in /api/.env).
 - Branch: `feature/api-skeleton` (Task 1.2 milestone; `feature/repo-tooling` kept until 1.1.4 is ticked)
-- Notes: 1.1.1–1.2.2 merged to main (1a21baa) and pushed to origin (github.com/abirami2k1/knowHer). First CI run red as expected (no apps yet). 1.2.6 (hardening) + 1.2.7 (Sentry, checkpoint) added to TASKLIST per founder OK. Project moved to Node 24 LTS on 2026-09-17 (Node 20 is EOL; Vitest 5 requires ≥ 22); .nvmrc = 24. docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
+- Notes: Task 1 merged to main (2c042d2), CI green and pushed to origin (github.com/abirami2k1/knowHer). First CI run red as expected (no apps yet). 1.2.6 (hardening) + 1.2.7 (Sentry, checkpoint) added to TASKLIST per founder OK. Project moved to Node 24 LTS on 2026-09-17 (Node 20 is EOL; Vitest 5 requires ≥ 22); .nvmrc = 24. docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
 
 ---
 
 ## Phase status (high level)
-- [~] Task 1 — Scaffolding & app shell (all items done; 1.1.4 awaiting green CI, 1.2.7 awaiting Sentry checkpoint)
+- [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
 - [ ] Task 2 — Database schema & migrations
 - [ ] Task 3 — Auth (Cognito)
 - [ ] Task 4 — Cycle rule engine (pure + tests)
@@ -40,7 +40,7 @@ Last updated: 2026-09-17
 - [x] 1.1.1 root repo + folders
 - [x] 1.1.2 editorconfig + prettier
 - [x] 1.1.3 .env.example (both apps)
-- [~] 1.1.4 GitHub Actions CI (written; green only once 1.2/1.3 land)
+- [x] 1.1.4 GitHub Actions CI (green on main at 2c042d2)
 - [x] 1.2.1 Express+TS init
 - [x] 1.2.2 dev + lint scripts
 - [x] 1.2.3 response helper
@@ -63,6 +63,7 @@ _(Add Task 2+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-17 — 1.1.4 done: CI green on main (Prettier + web lint/build + api lint/build/test) at 2c042d2. Task 1 complete.
 - 2026-09-17 — 1.4.2 done: vite-plugin-pwa (autoUpdate, app-shell precache), manifest (standalone, theme #B22222, 192/512/maskable icons — placeholder art), SW verified active on the production preview.
 - 2026-09-17 — 1.4.1 done: /shared/types.ts (ApiResponse<T>, ApiError) imported by api (respond.ts; tsconfig rootDir '..' so dist = dist/api/src + dist/shared) and web (@shared alias).
 - 2026-09-17 — 1.3.6 done: web/src/lib/api/client.ts (typed fetch, envelope unwrap, VITE_API_URL) + health.ts + useHealth (React Query); Home shows "Connected · ok" against the running api.
