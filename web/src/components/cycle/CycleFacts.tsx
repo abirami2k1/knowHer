@@ -1,4 +1,5 @@
 import type { CycleAssessmentDto, CycleDto } from '@shared/types';
+import { Card } from '@/components/ui/Card';
 import { formatCalendarDate } from '@/lib/dates';
 
 /**
@@ -32,13 +33,15 @@ export function CycleFacts({
   }
 
   return (
-    <dl className="divide-y divide-primary/10 rounded-card bg-white px-4 ring-1 ring-primary/10">
-      {rows.map(([term, value]) => (
-        <div key={term} className="flex justify-between gap-4 py-3">
-          <dt className="text-sm text-muted">{term}</dt>
-          <dd className="text-right text-sm font-medium text-ink">{value}</dd>
-        </div>
-      ))}
-    </dl>
+    <Card>
+      <dl className="divide-y divide-line px-5">
+        {rows.map(([term, value]) => (
+          <div key={term} className="flex justify-between gap-4 py-3.5">
+            <dt className="text-sm text-muted">{term}</dt>
+            <dd className="text-right text-sm font-medium text-ink">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </Card>
   );
 }

@@ -31,6 +31,10 @@ export async function buildDashboard(user: User, today: CalendarDate): Promise<D
   const stats = cycleStats(closed.map((c) => c.length as number));
   const expected = expectedOvulationDay({ stats, selfReportedAvg: user.avgCycleLength });
 
+  // Her typical length, for the UI to draw against. Own history first, then what
+  // she told us at onboarding; null rather than a stand-in number.
+  const cycleLengthTypical = stats.n >= 1 ? Math.round(stats.mean) : (user.avgCycleLength ?? null);
+
   if (!cycle) {
     return {
       cycleDay: null,
@@ -39,6 +43,8 @@ export async function buildDashboard(user: User, today: CalendarDate): Promise<D
       phaseCopy: CYCLE_COPY['fallback.no_history'],
       insight: CYCLE_COPY['insight.unknown'],
       expectedOvulation: null,
+      confirmedOvulationDay: null,
+      cycleLengthTypical,
       fallback: 'no_history',
     };
   }
@@ -65,6 +71,8 @@ export async function buildDashboard(user: User, today: CalendarDate): Promise<D
             basis: expected.basis,
           }
         : null,
+    confirmedOvulationDay: assessment.ovulationDay,
+    cycleLengthTypical,
     fallback,
   };
 }

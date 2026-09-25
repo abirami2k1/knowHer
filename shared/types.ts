@@ -191,5 +191,9 @@ export interface DashboardDto {
     cycleDay: number;
     basis: 'history' | 'self_reported';
   } | null;
+  /** Confirmed by the engine, not estimated — null until the shift is confirmed. */
+  confirmedOvulationDay: number | null;
+  /** Her typical length, for drawing where today sits. Null with nothing to go on. */
+  cycleLengthTypical: number | null;
   fallback: FallbackReason | null;
 }

@@ -40,7 +40,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
       {open && (
         <div className="fixed inset-0 z-50">
           <motion.div
-            className="absolute inset-0 bg-ink/30"
+            className="absolute inset-0 bg-ink/35 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -54,25 +54,27 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
             aria-modal="true"
             aria-label={title}
             tabIndex={-1}
-            className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[90dvh] w-full max-w-md flex-col rounded-t-[1.75rem] bg-bg-soft shadow-xl outline-none"
+            className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[90dvh] w-full max-w-md flex-col rounded-t-[2rem] bg-paper shadow-[var(--shadow-lift)] outline-none"
             initial={{ y: reduceMotion ? 0 : '100%' }}
             animate={{ y: 0 }}
             exit={{ y: reduceMotion ? 0 : '100%' }}
             transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center justify-between px-4 pt-4 pb-2">
-              <h2 className="text-lg font-semibold text-ink">{title}</h2>
+            {/* Grab handle: signals "this pulls down" before anyone reads a word. */}
+            <div aria-hidden className="mx-auto mt-3 h-1 w-10 rounded-pill bg-line" />
+            <div className="flex items-center justify-between px-5 pt-3 pb-2">
+              <h2 className="text-title text-ink">{title}</h2>
               <button
                 type="button"
                 onClick={onClose}
-                className="min-h-11 rounded-card px-3 text-sm font-medium text-muted hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="min-h-11 rounded-pill px-3 text-sm font-medium text-muted hover:bg-surface-sunken"
               >
                 Close
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+            <div className="flex-1 overflow-y-auto px-5 pb-4">{children}</div>
             {footer && (
-              <div className="border-t border-primary/10 bg-bg-soft px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <div className="border-t border-line bg-paper px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 {footer}
               </div>
             )}

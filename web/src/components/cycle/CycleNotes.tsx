@@ -1,4 +1,5 @@
 import type { AssessmentResponse } from '@shared/types';
+import { Card } from '@/components/ui/Card';
 
 /**
  * Every state the engine reported, in the engine's own words. The UI never writes
@@ -13,8 +14,10 @@ export function CycleNotes({ assessment, copy }: AssessmentResponse) {
   return (
     <ul className="space-y-2" aria-label="What this chart shows">
       {notes.map((note) => (
-        <li key={note} className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">
-          {note}
+        <li key={note}>
+          <Card tone="quiet" className="p-4">
+            <p className="text-[15px] leading-relaxed text-ink-soft">{note}</p>
+          </Card>
         </li>
       ))}
     </ul>

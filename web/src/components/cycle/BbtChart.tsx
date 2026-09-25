@@ -32,7 +32,7 @@ function ReadingDot({ cx, cy, payload }: DotProps) {
       cx={cx}
       cy={cy}
       r={excluded ? 4 : 3.5}
-      fill={excluded ? 'var(--color-bg-soft)' : 'var(--color-primary)'}
+      fill={excluded ? 'var(--color-paper)' : 'var(--color-primary)'}
       stroke="var(--color-primary)"
       strokeWidth={excluded ? 1.5 : 1}
       strokeDasharray={excluded ? '2 2' : undefined}
@@ -52,17 +52,17 @@ export function BbtChart({ assessment }: { assessment: CycleAssessmentDto }) {
   if (points.length === 0) return null;
 
   return (
-    <div className="rounded-card bg-white p-3 ring-1 ring-primary/10">
+    <div className="rounded-card bg-surface p-3 shadow-[var(--shadow-card)] ring-1 ring-line">
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={points} margin={{ top: 8, right: 8, bottom: 4, left: -18 }}>
-          <CartesianGrid stroke="var(--color-primary)" strokeOpacity={0.08} vertical={false} />
+          <CartesianGrid stroke="var(--color-line)" vertical={false} />
           <XAxis
             dataKey="cycleDay"
             type="number"
             domain={[1, lastDay]}
             tick={{ fontSize: 11, fill: 'var(--color-muted)' }}
             tickLine={false}
-            axisLine={{ stroke: 'var(--color-primary)', strokeOpacity: 0.2 }}
+            axisLine={{ stroke: 'var(--color-line)' }}
           />
           <YAxis
             domain={domainFor(temps)}
@@ -78,8 +78,8 @@ export function BbtChart({ assessment }: { assessment: CycleAssessmentDto }) {
             <ReferenceArea
               x1={assessment.ovulationDay}
               x2={lastDay}
-              fill="var(--color-calm)"
-              fillOpacity={0.08}
+              fill="var(--color-luteal)"
+              fillOpacity={0.1}
             />
           )}
 
@@ -93,6 +93,7 @@ export function BbtChart({ assessment }: { assessment: CycleAssessmentDto }) {
                 position: 'insideTopLeft',
                 fill: 'var(--color-calm)',
                 fontSize: 11,
+                fontWeight: 600,
               }}
             />
           )}
@@ -100,13 +101,13 @@ export function BbtChart({ assessment }: { assessment: CycleAssessmentDto }) {
           {assessment.ovulationDay !== null && (
             <ReferenceLine
               x={assessment.ovulationDay}
-              stroke="var(--color-primary)"
-              strokeOpacity={0.5}
+              stroke="var(--color-ovulatory)"
               label={{
                 value: 'Ovulation',
                 position: 'top',
-                fill: 'var(--color-primary)',
+                fill: 'var(--color-ovulatory)',
                 fontSize: 11,
+                fontWeight: 600,
               }}
             />
           )}
@@ -115,13 +116,14 @@ export function BbtChart({ assessment }: { assessment: CycleAssessmentDto }) {
             <ReferenceLine
               x={assessment.peakDay}
               stroke="var(--color-accent)"
-              strokeOpacity={0.6}
+              strokeOpacity={0.7}
               strokeDasharray="3 3"
               label={{
                 value: 'Peak',
                 position: 'top',
                 fill: 'var(--color-accent)',
                 fontSize: 11,
+                fontWeight: 600,
               }}
             />
           )}

@@ -1,5 +1,6 @@
 import { ChoiceList } from '@/components/ui/ChoiceList';
 import type { OnboardingDraft } from '@/hooks/useOnboarding';
+import { Card } from '@/components/ui/Card';
 import { WHY } from '../copy';
 import { StepLayout } from './StepLayout';
 
@@ -47,10 +48,13 @@ export function TrackingStep({
         }
         multiple
       />
-      <p className="rounded-card bg-white p-4 text-sm text-muted ring-1 ring-primary/10">
-        knowHer confirms ovulation a few days <span className="font-medium text-ink">after</span> it
-        happens, from your own readings. It will never tell you in advance that you are ovulating.
-      </p>
+      <Card tone="quiet" className="p-4">
+        <p className="text-sm leading-relaxed text-ink-soft">
+          knowHer confirms ovulation a few days <span className="font-medium text-ink">after</span>{' '}
+          it happens, from your own readings. It will never tell you in advance that you are
+          ovulating.
+        </p>
+      </Card>
     </StepLayout>
   );
 }

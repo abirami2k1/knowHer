@@ -3,6 +3,7 @@ import { BbtChart } from '@/components/cycle/BbtChart';
 import { CycleFacts } from '@/components/cycle/CycleFacts';
 import { CycleNotes } from '@/components/cycle/CycleNotes';
 import { MucusRow } from '@/components/cycle/MucusRow';
+import { Card, Eyebrow } from '@/components/ui/Card';
 import { useAssessment } from '@/hooks/useAssessment';
 import { useCycles } from '@/hooks/useCycles';
 import { formatCalendarDate } from '@/lib/dates';
@@ -18,40 +19,50 @@ export default function Cycle() {
   const assessment = useAssessment(cycleId);
 
   if (cycles.isPending) {
-    return <p className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">Loading…</p>;
+    return (
+      <Card tone="quiet" className="p-5">
+        <p className="text-muted">Loading…</p>
+      </Card>
+    );
   }
 
   if (!cycles.data?.length) {
     return (
-      <section aria-labelledby="cycle-title" className="space-y-4">
-        <h1 id="cycle-title" className="text-2xl font-semibold tracking-tight">
-          Your chart
-        </h1>
-        <p className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">
-          Your chart begins with your first period start. Log one from the daily log and it will
-          appear here.
-        </p>
+      <section aria-labelledby="cycle-title" className="space-y-5">
+        <header>
+          <Eyebrow>Your chart</Eyebrow>
+          <h1 id="cycle-title" className="mt-2 font-display text-display text-ink">
+            Not started yet
+          </h1>
+        </header>
+        <Card tone="quiet" className="p-5">
+          <p className="text-[15px] leading-relaxed text-ink-soft">
+            Your chart begins with your first period start. Log one from the daily log and it will
+            appear here.
+          </p>
+        </Card>
       </section>
     );
   }
 
   return (
     <section aria-labelledby="cycle-title" className="space-y-5">
-      <header className="space-y-1">
-        <h1 id="cycle-title" className="text-2xl font-semibold tracking-tight">
-          Your chart
+      <header>
+        <Eyebrow>Your chart</Eyebrow>
+        <h1 id="cycle-title" className="mt-2 font-display text-display text-ink">
+          Reading the pattern
         </h1>
-        <p className="text-muted">
+        <p className="mt-2 text-[15px] leading-relaxed text-muted">
           Ovulation is only ever confirmed after it has happened — never predicted.
         </p>
       </header>
 
       <label className="block">
-        <span className="mb-1 block text-sm font-medium text-ink">Cycle</span>
+        <span className="eyebrow mb-2 block text-muted">Cycle</span>
         <select
           value={cycleId}
           onChange={(e) => setSelectedId(e.target.value)}
-          className="min-h-12 w-full rounded-card bg-white px-3 text-base text-ink ring-1 ring-primary/20 focus:ring-2 focus:ring-primary focus:outline-none"
+          className="min-h-12 w-full rounded-pill bg-surface px-4 text-base text-ink ring-1 ring-line focus:ring-2 focus:ring-primary focus:outline-none"
         >
           {cycles.data.map((cycle) => (
             <option key={cycle.id} value={cycle.id}>
@@ -63,15 +74,17 @@ export default function Cycle() {
       </label>
 
       {assessment.isPending && (
-        <p className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">
-          Reading your chart…
-        </p>
+        <Card tone="quiet" className="p-5">
+          <p className="text-muted">Reading your chart…</p>
+        </Card>
       )}
 
       {assessment.isError && (
-        <p role="alert" className="rounded-card bg-white p-4 text-primary ring-1 ring-primary/10">
-          Couldn't load this cycle. Check your connection and try again.
-        </p>
+        <Card className="p-5">
+          <p role="alert" className="text-primary">
+            Couldn't load this cycle. Check your connection and try again.
+          </p>
+        </Card>
       )}
 
       {assessment.data && (

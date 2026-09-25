@@ -1,4 +1,5 @@
 import type { ChartPoint } from '@shared/types';
+import { Card, Eyebrow } from '@/components/ui/Card';
 
 /**
  * Sivi's mucus row, aligned under the chart by cycle day. A plain flex row rather
@@ -15,15 +16,21 @@ export function MucusRow({ series }: { series: ChartPoint[] }) {
   if (!series.some((p) => p.mucus !== null)) return null;
 
   return (
-    <div className="rounded-card bg-white p-3 ring-1 ring-primary/10">
-      <h3 className="mb-2 text-sm font-medium text-muted">Mucus by cycle day</h3>
+    <Card className="p-4">
+      <Eyebrow className="mb-3">Mucus by cycle day</Eyebrow>
       <ul className="flex gap-0.5 overflow-x-auto pb-1">
         {series.map((point) => {
           const symbol = point.mucus ? SYMBOL[point.mucus] : null;
           return (
             <li key={point.cycleDay} className="min-w-6 shrink-0 text-center">
               <span
-                className={`block text-base ${point.mucus === 'eggwhite' ? 'text-accent' : 'text-ink'}`}
+                className={`block text-base ${
+                  point.mucus === 'eggwhite'
+                    ? 'text-accent'
+                    : point.mucus
+                      ? 'text-ink'
+                      : 'text-line'
+                }`}
                 title={symbol ? `Day ${point.cycleDay}: ${symbol.label}` : undefined}
               >
                 {symbol ? symbol.mark : '–'}
@@ -40,7 +47,7 @@ export function MucusRow({ series }: { series: ChartPoint[] }) {
           );
         })}
       </ul>
-      <dl className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+      <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
         {Object.values(SYMBOL).map((s) => (
           <div key={s.label} className="flex items-center gap-1">
             <dt aria-hidden>{s.mark}</dt>
@@ -48,6 +55,6 @@ export function MucusRow({ series }: { series: ChartPoint[] }) {
           </div>
         ))}
       </dl>
-    </div>
+    </Card>
   );
 }

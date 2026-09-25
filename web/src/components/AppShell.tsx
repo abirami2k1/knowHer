@@ -3,12 +3,13 @@ import { PageTransition } from './PageTransition';
 
 /**
  * Mobile-first shell: a single centered column (narrow on desktop too) with the
- * bottom nav pinned. Pages render through <PageTransition/>, which hosts the router outlet.
+ * bottom nav pinned. The grain layer keeps the warm page from reading as flat.
  */
 export function AppShell() {
   return (
-    <div className="min-h-dvh">
-      <main className="mx-auto w-full max-w-md px-4 pt-6 pb-28">
+    <div className="grain min-h-dvh">
+      <div aria-hidden className="grain-after" />
+      <main className="mx-auto w-full max-w-md px-5 pt-8 pb-32">
         <PageTransition />
       </main>
       <BottomNav />

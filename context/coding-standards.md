@@ -51,7 +51,8 @@ If a change would scatter cycle rules across UI or routes, stop — it belongs i
 
 - Do NOT create `tailwind.config.ts` or `tailwind.config.js` — those are for v3
 - All theme configuration lives in CSS via the `@theme` directive in `src/app/globals.css`
-- Brand tokens (color, radius, spacing) defined once, centrally — no hardcoded hex values in components
+- Brand tokens (color, radius, type, shadow) defined once, centrally — no hardcoded hex values in components
+- Cycle phase colours are tokens and are applied through `web/src/lib/phase.ts`, so a phase looks the same everywhere it appears
 - Dark mode optional; warm light theme is the default
 - Use shadcn/ui primitives where applicable; otherwise build reusable primitives in `components/ui`
 - No inline styles except for dynamic values that can't be expressed in Tailwind (e.g. calculated chart positions)
@@ -63,11 +64,21 @@ Example theme setup:
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #B22222;   /* bold, fearless red */
+  --color-primary: #A51F2D;   /* bold, fearless red */
   --color-accent:  #E86A5C;
-  --color-bg-soft: #FFF6F4;
-  --color-ink:     #2A2A2A;
-  --color-calm:    #3FA796;
+  --color-paper:   #FDF7F4;   /* the page */
+  --color-surface: #FFFDFC;   /* cards on it */
+  --color-ink:     #2B2220;
+  --color-calm:    #3F8F86;
+
+  /* Cycle phases carry meaning, so they are tokens, not decoration. */
+  --color-menstrual: #A51F2D;
+  --color-follicular: #3F8F86;
+  --color-ovulatory: #C98A2B;
+  --color-luteal: #7B5A86;
+
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
 }
 ```
 
