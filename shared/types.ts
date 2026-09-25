@@ -166,3 +166,30 @@ export interface AssessmentResponse {
   assessment: CycleAssessmentDto;
   copy: Record<string, string>;
 }
+
+// ── Dashboard ────────────────────────────────────────────────────────────
+
+export type Phase = 'menstrual' | 'follicular' | 'ovulatory' | 'luteal' | 'unknown';
+export type FallbackReason = 'irregular' | 'long' | 'no_history';
+
+/**
+ * GET /dashboard?today=YYYY-MM-DD.
+ *
+ * `basis` says where the phase came from: 'confirmed' means the engine saw the
+ * evidence, 'estimated' means arithmetic over past cycles, 'none' means the app
+ * is declining to place today. `expectedOvulation` is always an estimate and is
+ * withheld entirely whenever `fallback` is set.
+ */
+export interface DashboardDto {
+  cycleDay: number | null;
+  phase: Phase;
+  basis: 'confirmed' | 'estimated' | 'none';
+  phaseCopy: string;
+  insight: string;
+  expectedOvulation: {
+    date: string;
+    cycleDay: number;
+    basis: 'history' | 'self_reported';
+  } | null;
+  fallback: FallbackReason | null;
+}

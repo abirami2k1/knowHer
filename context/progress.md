@@ -22,9 +22,9 @@ Last updated: 2026-09-24
 ---
 
 ## Currently working on
-- Task: **8.0.1** — `GET /dashboard` (phase, expected-ovulation estimate, insight). Task 7 is code-complete; the chart wants a founder look with real logged data.
-- Branch: `feature/cycle-tracker`. Uncommitted.
-- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open. Task 8 is where `phase.ts` / `estimate.ts` join the engine per the engine plan — the Sivi answers matter more from here on.
+- Task: **9.0.1** — `GET /history?month` (logged days only, no predictions). Task 8 is code-complete.
+- Branch: `feature/cycle-tracker` (Tasks 7–8; rename or split at merge if you prefer one branch per phase).
+- Notes: Task 8 runs on the engine-plan defaults. Every number it uses (`defaultLutealAssumption` 14, `minFollicularDays` 8, `minCyclesForEstimate` 2, `ovulatoryWindowDays` 2, `irregularCvThreshold` 0.18, `longCycleStdevMultiplier` 2) is a one-line change in `CYCLE_RULES` once 4.4.0 and the evidence-file decisions land.
 
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
@@ -34,7 +34,7 @@ Last updated: 2026-09-24
 - [x] Task 5 — Onboarding
 - [x] Task 6 — Daily Log + Period Tracker (founder browser click-through pending)
 - [x] Task 7 — Cycle Tracker UI (founder browser look pending)
-- [ ] Task 8 — Dashboard
+- [x] Task 8 — Dashboard (founder browser look pending)
 - [ ] Task 9 — Cycle History (calendar)
 - [ ] Task 10 — Trends
 - [ ] Task 11 — Knowledge Tab + Admin
@@ -151,12 +151,20 @@ Last updated: 2026-09-24
 - [x] 7.3.1–7.3.3 anovulatory / low-data / disagreement states, all from the API's copy map
 - [x] 7.3.4 no cycle math on the screen — only chart scaling
 
-_(Add Task 8+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 8 — Dashboard
+- [x] 8.0.1 GET /dashboard?today= (phase, estimate, insight)
+- [x] 8.0.2 today card: cycle day + phase + insight, from the copy map
+- [x] 8.0.3 expected ovulation, labelled an estimate and never shown under a fallback
+- [x] 8.0.4 quick links into the daily log and the chart
+- [x] 8.0.5 honest fallback for long / irregular / no-cycle
+
+_(Add Task 9+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-24 — Task 8 done. `domain/cycle/estimate.ts` and `phase.ts` joined the engine per cycle-engine-plan §6.10–6.11 (they were deferred from Task 4 to here, where they are first used): `cycleStats` (mean + sample stdev + cv over closed lengths), `expectedOvulationDay` (`avg − defaultLutealAssumption`, floored at `minFollicularDays`; history once n ≥ minCyclesForEstimate, else the onboarding average labelled self_reported, else nothing), `isFallback` (irregular → long → none), `resolvePhase` (fallback → menstrual → confirmed luteal → estimated ovulatory/luteal → follicular) returning `basis: confirmed | estimated | none`, which is what stops an estimate from ever reading as a confirmation. 28 new engine tests, including config-flip tests proving a retuned luteal assumption or ovulatory window changes the answer. `services/dashboard.ts` assembles; `GET /dashboard` requires `today` (D1). Web: Home is now the dashboard — TodayCard (says "an estimate, not a confirmation" whenever basis is estimated, and shows the API's fallback words instead of a phase when it declines), ExpectedOvulation (labelled, never a fertile-window or safe-day signal, absent under any fallback), quick links to the log and the chart. **The smoke run caught a real judgement error:** the first draft returned `no_history` for a woman on day 2 of her first ever period, refusing to name a phase she was plainly in. `no_history` now means "no current cycle", not "no completed cycles" — she gets `menstrual/confirmed`, plus a self-reported estimate if she gave a cycle length at onboarding. Verified all six states against the local DB (no cycle · first cycle bleeding · first cycle with self-reported average · regular history follicular · regular history ovulatory · long · irregular). Task 1's API-health card left Home with this rewrite; `useHealth` and `lib/api/health.ts` are now unused but kept for Task 13's offline work.
 - 2026-09-24 — Task 7 done. `GET /cycles/:id/assessment` runs the engine over the logs the cycle's interval contains and returns `{ cycle, assessment, copy }`, where `copy` holds only the wording for the states this cycle actually reports — the UI never writes cycle words of its own. **Deviation from D4 worth knowing:** the stored snapshot has six summary fields and no chart rows, so this endpoint re-runs the engine for closed cycles too; the snapshot stays the cheap read for Trends. Web: recharts 3.10 added; `BbtChart` plots by cycle day with the Y domain padded (−0.2/+0.3 °F) so the shift is visible, coverline as a dashed ReferenceLine, ovulation and peak as ReferenceLines, luteal stretch as a ReferenceArea drawn only once ovulation is confirmed, and disturbed/excluded readings drawn hollow — plotted, visibly not counted. `MucusRow` is a plain flex row aligned by cycle day (Sivi's symbols, with a legend and screen-reader text per day). `CycleFacts` shows only confirmed values, and names the day ovulation was *confirmed* alongside the day it occurred. `CycleNotes` renders the flag and confidence copy verbatim. New /cycle route, linked from Home. Smoke-tested against a realistic 28-day ovulatory chart: ovulation day 14, confirmed day 17, peak day 14, confidence full.
 - 2026-09-24 — 6.3.x done: `components/ui/Sheet.tsx` is a new bottom-sheet primitive (Escape and backdrop close it, focus moves in on open, the page behind is locked from scrolling, reduced-motion respected) — the app's main entry surface on a phone. `hooks/useLogDraft.ts` holds the day being edited, keeping text fields as strings so an empty box means "nothing recorded" rather than zero, and `toBody` sends every field so clearing one actually clears it. `components/log/LogForm.tsx` is presentational only — the tracker sections appear solely for the signals she tracks (BBT gated on trackingBBT; mucus *and* cervix on trackingMucus, grouped as fertility signs — worth a second look if you want cervix separate). Flow is always available, since it is what triggers the period-start ask. `PeriodStartPrompt` implements D3: bleeding beyond spotting on a day no cycle covers asks whether her period started; declining leaves the day logged as an orphan bleeding day and starts nothing. `DateSwitcher` backfills freely but has no tomorrow. Log page wires it together with toasts; `shiftDate` joined `lib/dates.ts` so day arithmetic stays in one place. Both builds, both lints and repo prettier green; 114 api tests green.
 - 2026-09-24 — 6.2.x done: boundary arithmetic extracted into `services/cycle-intervals.ts` as pure planners (`planStart`, `planEditStart`) so every edge case is unit-testable without a database — CI has no Postgres, and DB-backed tests would have gone untested there. `services/cycles.ts` now only applies plans: it owns `logsForCycle` (the one place membership is resolved, D2), `toEngineInput` (cycle day from the interval start; Decimal → number at the boundary), `assess`, and `refreshSnapshot` (closed cycles only — live ones are computed on read, D4). Snapshot writes happen outside the boundary transaction, so a derived-data failure can never undo the boundary the user just recorded. Backfilling a start inside existing history splits that cycle and the new half inherits the end of the interval it split, instead of being left open in the middle; only an exact duplicate start date is refused (409). Routes: GET/POST /cycles, PATCH /cycles/:id. A log write inside a closed cycle's range now refreshes that cycle's snapshot. 17 planner tests — one of which caught a real inverted sort comparator that picked the *earliest* neighbouring cycle instead of the latest once three cycles existed. DB smoke test covered split, derived membership, duplicate refusal, start edit and a live assessment.

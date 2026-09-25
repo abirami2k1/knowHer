@@ -5,7 +5,11 @@
 export { assessCycle } from './assess';
 export { CYCLE_COPY } from './copy';
 export type { CopyKey } from './copy';
+export { cycleStats, expectedOvulationDay, isFallback } from './estimate';
+export type { CycleStats, ExpectedOvulation } from './estimate';
 export { computeLutealLength, lutealDayFor } from './luteal';
+export { resolvePhase } from './phase';
+export type { PhaseResult } from './phase';
 export { detectPeakDay } from './peak';
 export type { PeakResult, PeakStatus } from './peak';
 export { CYCLE_RULES, withRules } from './rules';

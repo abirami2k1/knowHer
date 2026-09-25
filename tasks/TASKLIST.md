@@ -195,11 +195,11 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Task 8 — DASHBOARD
 
-- [ ] **8.0.1** `[api]` `GET /dashboard`: current phase, expected-ovulation estimate (formula), phase→insight. AC: returns fields.
-- [ ] **8.0.2** `[web]` Today card: cycle day + phase + warm insight (copy map). AC: renders for normal cycle.
-- [ ] **8.0.3** `[web]` Expected ovulation date, labelled as estimate. AC: label present.
-- [ ] **8.0.4** `[web]` Quick link into today's Daily Log. AC: navigates.
-- [ ] **8.0.5** `[web]` Honest fallback for long/irregular/insufficient history. AC: shows instead of asserting phase.
+- [x] **8.0.1** `[api]` `GET /dashboard`: current phase, expected-ovulation estimate (formula), phase→insight. AC: returns fields.
+- [x] **8.0.2** `[web]` Today card: cycle day + phase + warm insight (copy map). AC: renders for normal cycle.
+- [x] **8.0.3** `[web]` Expected ovulation date, labelled as estimate. AC: label present.
+- [x] **8.0.4** `[web]` Quick link into today's Daily Log. AC: navigates.
+- [x] **8.0.5** `[web]` Honest fallback for long/irregular/insufficient history. AC: shows instead of asserting phase.
 
 **Task 8 done when:** dashboard shows correct phase+insight normally and honest fallback otherwise.
 
