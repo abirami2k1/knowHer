@@ -24,9 +24,7 @@ export default function Profile() {
         <h1 id="profile-title" className="text-2xl font-semibold tracking-tight">
           Profile
         </h1>
-        <p className="text-muted">
-          Your account, preferences and privacy controls arrive in Tasks 5 and 12.
-        </p>
+        <p className="text-muted">Your export and delete controls arrive in Task 12.</p>
       </header>
 
       <dl className="rounded-card bg-white p-4 ring-1 ring-primary/5">

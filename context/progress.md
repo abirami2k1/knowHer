@@ -5,7 +5,7 @@ The detailed items live in `@tasks/TASKLIST.md`; this file is the at-a-glance tr
 
 Status keys: `[ ]` not started · `[~]` in progress · `[x]` done
 
-Last updated: 2026-09-17
+Last updated: 2026-09-24
 
 ---
 
@@ -17,23 +17,21 @@ Last updated: 2026-09-17
 - [ ] **12.0.3 Cognito admin credentials** — `DELETE /account` must disable then delete the Cognito user (D8). The API needs IAM credentials (or an instance role) allowed `cognito-idp:AdminDisableUser` + `AdminDeleteUser` on the pool. Until provided, the DB side of deletion ships and the Cognito step is a documented stub that fails closed.
 - [ ] **13.0.1 VAPID** — approve generating the web-push key pair.
 - [ ] **AWS cleanup** — delete app clients `knowher-web` and `knowher-web-spa` (unused; the second one's secret was pasted in chat). `knowher-web-public` is the live one.
-- [ ] **Git cleanup** — delete merged branches `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding`, `feature/database`, `feature/auth`, `feature/cycle-engine` on your say-so.
+- [ ] **Git cleanup** — delete merged branches `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding`, `feature/database`, `feature/auth`, `feature/cycle-engine`, `feature/onboarding` on your say-so.
 
 ---
 
 ## Currently working on
-- Task: **5.1.1** — onboarding API (PATCH /me + POST /onboarding, Zod). Task 4 committed through the gate; 4.4.0 parked (see "Needed from the founder"). (real pool IDs in /api/.env + /web/.env.local). Once present: verify sign-up → confirm → login → /me → sign-out end to end, tick 3.1.4–3.2.5, then commit Task 3. Still open: 1.2.7 Sentry (founder DSNs or skip).
-- Branch: `feature/onboarding` (Task 5). All earlier feature branches merged. `feature/repo-tooling`, `feature/api-skeleton`, `feature/scaffolding` are fully merged — delete on founder OK.
-- Notes: Task 1 merged to main (2c042d2), CI green and pushed to origin (github.com/abirami2k1/knowHer). First CI run red as expected (no apps yet). 1.2.6 (hardening) + 1.2.7 (Sentry, checkpoint) added to TASKLIST per founder OK. Project moved to Node 24 LTS on 2026-09-17 (Node 20 is EOL; Vitest 5 requires ≥ 22); .nvmrc = 24. docker-compose.yml written but NOT run — founder starts it at the 2.1.1 checkpoint.
-
----
+- Task: **6.1.1** — `PUT /logs` upsert by (userId, date).
+- Branch: `feature/daily-log` (Task 6). `feature/onboarding` merged to main.
+- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open; neither blocks Task 6.
 
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
 - [x] Task 2 — Database schema & migrations
 - [x] Task 3 — Auth (Cognito)
 - [~] Task 4 — Cycle rule engine (pure + tests) — code + synthetic fixtures done; 4.4.0 Sivi gate open
-- [ ] Task 5 — Onboarding
+- [x] Task 5 — Onboarding
 - [ ] Task 6 — Daily Log + Period Tracker
 - [ ] Task 7 — Cycle Tracker UI
 - [ ] Task 8 — Dashboard
@@ -116,12 +114,28 @@ Last updated: 2026-09-17
 - [~] 4.4.2 all fixtures green (18 fixtures, 48 tests) — expectations final only after 4.4.0
 - [x] 4.4.3 config-flip fixtures (consecutiveRises=4 confirms a day later; with a day-20 dip it does not; control confirms)
 
-_(Add Task 5+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 5 — Onboarding
+- [x] 5.1.1 PATCH /me + POST /onboarding (Zod) — profile, conditions, goals, tracking flags persist; onboardedAt set once
+- [x] 5.1.2 lastPeriodStart + today → first open Cycle in one transaction; absent date = "not sure", no cycle
+- [x] 5.2.1 Welcome step
+- [x] 5.2.2 Profile step (name, age band)
+- [x] 5.2.3 Period history step with the "not sure" path
+- [x] 5.2.4 Health context step
+- [x] 5.2.5 Goals step (multi-select)
+- [x] 5.2.6 Conditional BBT/mucus step (only for the ovulation goal)
+- [x] 5.2.7 Confirmation step → single submit → Home
+- [x] 5.2.8 Progress indicator, back nav, Framer transitions (reduced-motion respected)
+- [x] 5.2.9 Returning users skip onboarding (RequireAuth redirect + Navigate out of the flow)
+
+_(Add Task 6+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-24 — Task 5 UI (5.2.1–5.2.9) built. `hooks/useOnboarding.ts` holds the whole flow in a reducer and writes once at the end, so an abandoned onboarding leaves nothing behind; it also owns the condition-exclusivity toggle (picking a real condition drops none/unsure and vice versa, mirroring the API refine), drops the tracking answers if the ovulation goal is unpicked, and exposes `buildRequest` (omits every "not sure" field; `lastPeriodStart` and `today` travel together or not at all). `pages/onboarding/copy.ts` is the single home for option labels and the "why we ask" lines. Steps under `pages/onboarding/steps/` share a `StepLayout`; the tracking step is conditional on the ovulation goal and states plainly that ovulation is confirmed *after* the fact. `components/ui/ChoiceList.tsx` is a new primitive — real radio/checkbox inputs, 48px rows, focus ring on the whole row via `has-focus-visible:` (verified in the built CSS). Container: progress bar (role=progressbar + live step count), back nav, Framer step transitions honouring prefers-reduced-motion, one mutation that seeds the React Query `me` cache and lands on Home. Routing: `/onboarding` sits inside RequireAuth but outside AppShell (no bottom nav mid-flow); RequireAuth now waits for /me and redirects an un-onboarded user in, and the page redirects a finished one out (5.2.9). `lib/dates.ts` (web) supplies the user's own `today` — the server never derives it (D1). Verified: both builds + both lints + repo prettier green, 83 api tests green, /onboarding serves 200 and both write routes answer 401 anonymously. Founder confirmed the click-through in the browser on 2026-09-24.
+- 2026-09-24 — 5.1.2 done: `lib/dates.ts` (api) is the new home for plain-calendar-date helpers — dates are carried as UTC midnight so a Postgres `date` round-trips exactly and no local offset or DST transition can shift a day (12 tests, incl. the 2026-11-01 DST case). `onboardingSchema` gained optional `lastPeriodStart` + `today`, with refines: a date requires the client's own `today` (the server must not invent one, D1), cannot be in the future, and cannot be more than `MAX_LAST_PERIOD_AGE_DAYS` (365) back. New `services/onboarding.ts` (completeOnboarding moved out of users.ts) does the profile write and the first-cycle creation in one transaction, so nobody ends up onboarded-but-cycleless; the cycle is left open with no endDate (the next period start closes it, D3) and a re-submit neither duplicates the cycle nor moves onboardedAt. "Not sure" = the field is simply absent: no cycle, no invented start date. Smoke-tested all three paths against the local DB.
+- 2026-09-24 — 5.1.1 done: zod 4 added to /api; `src/schemas/users.ts` is the single source of profile input validation (AGE_BANDS / CONDITIONS / GOALS mirroring the Prisma enums, `none`/`unsure` refined as exclusive of real conditions, duplicate-free arrays, avgCycleLength 15–90 and avgPeriodLength 1–15 kept deliberately wide for irregular cycles, displayName trimmed 1–40). `updateProfileSchema` = strict partial, rejects an empty body and anything the client must not set (role, id, onboardedAt); `onboardingSchema` = strict, requires displayName + ageBand, defaults the rest, and treats absent cycle lengths as "not sure". `lib/validate.ts` parseBody → AppError 400 `invalid_input` naming fields only, never the submitted values (health data). services/users.ts gained updateProfile + completeOnboarding (onboardedAt preserved on resubmit). Routes: PATCH /me in routes/me.ts, POST /onboarding in routes/onboarding.ts, both behind requireAuth, both returning the toProfile DTO. 68 api tests green (14 schema, 3 parseBody, 3 guard-order), lint + build clean, service path smoke-tested against the local DB. Known: a bare re-submit of POST /onboarding resets the defaulted fields — correct for a whole-form submit, and the web guard routes onboarded users away from the flow.
 - 2026-09-17 — `implementation/cycle-engine-evidence.md` (literature review, status proposal) arrived from the founder's other session. Contains no workbook data. Its rule proposals (peakConfirmDays 3, disagreementToleranceDays 3, defaultLutealAssumption 13 + personal mean, FIGO irregularity by age band, coverage floor before an anovulatory verdict, minValidTemps derived = 9, plausibleRangeF + implausible_reading, rulesVersion on snapshots, 'around day N' wording) are NOT applied — each is tagged for Sivi or the founder and joins the 4.4.0 agenda.
 - 2026-09-17 — Task 4 engine built per cycle-engine-plan.md (adopted; phase/estimate deferred to Task 8). api/src/domain/cycle/: temps (integer hundredths, grid snap), coverline (window by readings or calendar days, candidate = snapped max + offset, dip annotation), shift (scan; run walks all readings so a disturbed one breaks it; false-shift slides the window; live → pending; optional dip anchor), peak, luteal, series (Temp Count / Luteal / Peak Count rows), assess (flags in fixed order, confidence tiers), copy (all keys), index. Guard rails: purity test (no Date/prisma/express), inline-prose scanner (assess/shift/peak/luteal/series/coverline hold no sentences), ESLint no-restricted-imports on the folder. 18 typed fixtures + invariants (determinism, order-independence, retrospective prefix test, chart rows). Finding: the plan's 'disturbed' claim was wrong for its own numbers — excluding day 13 pulls a lower reading into the window and moves ovulation to day 15; kept as its own fixture for Sivi (Q2/Q9). 48 api tests green.
 - 2026-09-17 — Task 3 verified end to end against the dev pool us-east-2 (SPA app client without a secret — the wizard's default "Traditional web application" type generates one, which the browser SDK cannot use; a probe with ForgotPassword on a nonexistent address reveals a secret requirement). Sign-up → email code → login → /me (one User row) → Profile (email from ID token) → sign-out → wrong-password toast → login all confirmed by the founder in the browser pane. Added confirm-password field. Two dead app clients (knowher-web, knowher-web-spa) remain in the pool; the latter's secret was pasted in chat — delete both.

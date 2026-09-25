@@ -6,11 +6,13 @@ import SignUp from '@/pages/auth/SignUp';
 import Home from '@/pages/Home';
 import Learn from '@/pages/Learn';
 import Log from '@/pages/Log';
+import Onboarding from '@/pages/onboarding/Onboarding';
 import Profile from '@/pages/Profile';
 
 /**
  * All routes live here. Public: /login, /signup. Everything else sits behind
- * RequireAuth and renders inside the shell (bottom nav + page transition).
+ * RequireAuth. /onboarding is authed but deliberately outside the shell — no bottom
+ * nav until she has finished. Everything else renders inside it.
  */
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
@@ -18,6 +20,7 @@ export const router = createBrowserRouter([
   {
     element: <RequireAuth />,
     children: [
+      { path: '/onboarding', element: <Onboarding /> },
       {
         path: '/',
         element: <AppShell />,

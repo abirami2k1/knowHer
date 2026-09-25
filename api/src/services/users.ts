@@ -1,6 +1,7 @@
 import type { UserProfile } from '../../../shared/types';
 import type { User } from '../generated/prisma/client';
 import { prisma } from '../lib/prisma';
+import type { UpdateProfileInput } from '../schemas/users';
 
 /**
  * The User row for a verified Cognito subject, created on first sight.
@@ -8,6 +9,11 @@ import { prisma } from '../lib/prisma';
  */
 export function findOrCreateUserByCognitoSub(cognitoSub: string): Promise<User> {
   return prisma.user.upsert({ where: { cognitoSub }, create: { cognitoSub }, update: {} });
+}
+
+/** PATCH /me — writes only the fields the request actually sent. */
+export function updateProfile(userId: string, input: UpdateProfileInput): Promise<User> {
+  return prisma.user.update({ where: { id: userId }, data: input });
 }
 
 /** What the client is allowed to see about a user. Never includes cognitoSub. */
