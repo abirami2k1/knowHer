@@ -6,7 +6,11 @@ import type { Confidence, FallbackReason, Flag, Phase } from './types';
  * Tone: warm, calm, second person, no alarm. Never a promise, never a diagnosis.
  */
 export type CopyKey =
-  Flag | `confidence.${Confidence}` | `phase.${Phase}` | `fallback.${FallbackReason}`;
+  | Flag
+  | `confidence.${Confidence}`
+  | `phase.${Phase}`
+  | `insight.${Phase}`
+  | `fallback.${FallbackReason}`;
 
 export const CYCLE_COPY: Readonly<Record<CopyKey, string>> = Object.freeze({
   // ── Flags ──────────────────────────────────────────────────────────────────
@@ -40,6 +44,20 @@ export const CYCLE_COPY: Readonly<Record<CopyKey, string>> = Object.freeze({
   'phase.ovulatory': 'Around your estimated ovulation. Many feel most outgoing and energised now.',
   'phase.luteal': 'The weeks after ovulation. Slower, steadier days; be gentle with your plans.',
   'phase.unknown': "We can't place today in a phase yet. Keep logging and it will come into focus.",
+
+  // ── Life-to-cycle insight (Task 8 dashboard) ───────────────────────────────
+  // What today might feel like, and what it is worth spending energy on. Framed
+  // as a tendency, never a prescription, and never a claim about her body today.
+  'insight.menstrual':
+    'If you can, make today lighter than usual. Warmth, food you like, and fewer demands go a long way.',
+  'insight.follicular':
+    'Ideas and stamina often come easier here. A good stretch for new work, hard conversations and plans.',
+  'insight.ovulatory':
+    'Many feel most social and articulate around now — worth putting the things that need other people here.',
+  'insight.luteal':
+    'Focus often turns inward. Finishing beats starting, and a smaller list is not a failure of will.',
+  'insight.unknown':
+    'Whatever today feels like is worth noting. The more you log, the more the pattern speaks for itself.',
 
   // ── Honest fallbacks (Task 8 dashboard) ────────────────────────────────────
   'fallback.long':

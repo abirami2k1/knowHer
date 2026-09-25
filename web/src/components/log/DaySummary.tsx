@@ -1,4 +1,5 @@
 import type { DailyLogDto } from '@shared/types';
+import { Card } from '@/components/ui/Card';
 import {
   CERVIX_OPTIONS,
   ENERGY_LABELS,
@@ -16,9 +17,9 @@ function labelOf<T extends string>(options: { value: T; label: string }[], value
 export function DaySummary({ log }: { log: DailyLogDto | null }) {
   if (!log) {
     return (
-      <p className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">
-        Nothing recorded for this day yet.
-      </p>
+      <Card tone="quiet" className="p-5">
+        <p className="text-muted">Nothing recorded for this day yet.</p>
+      </Card>
     );
   }
 
@@ -47,20 +48,22 @@ export function DaySummary({ log }: { log: DailyLogDto | null }) {
 
   if (recorded.length === 0) {
     return (
-      <p className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">
-        Nothing recorded for this day yet.
-      </p>
+      <Card tone="quiet" className="p-5">
+        <p className="text-muted">Nothing recorded for this day yet.</p>
+      </Card>
     );
   }
 
   return (
-    <dl className="divide-y divide-primary/10 rounded-card bg-white px-4 ring-1 ring-primary/10">
-      {recorded.map(([term, value]) => (
-        <div key={term} className="flex justify-between gap-4 py-3">
-          <dt className="text-sm text-muted">{term}</dt>
-          <dd className="max-w-[62%] text-right text-sm font-medium text-ink">{value}</dd>
-        </div>
-      ))}
-    </dl>
+    <Card>
+      <dl className="divide-y divide-line px-5">
+        {recorded.map(([term, value]) => (
+          <div key={term} className="flex justify-between gap-4 py-3.5">
+            <dt className="text-sm text-muted">{term}</dt>
+            <dd className="max-w-[62%] text-right text-sm font-medium text-ink">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </Card>
   );
 }

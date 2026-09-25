@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
+import { Card, Eyebrow } from '@/components/ui/Card';
 import { useAuth } from '@/hooks/useAuth';
 import { useMe } from '@/hooks/useMe';
 
@@ -18,39 +19,56 @@ export default function Profile() {
     navigate('/login', { replace: true });
   }
 
+  const rows: [string, string][] = [
+    ['Signed in as', email ?? '—'],
+    [
+      'Name',
+      me.isPending
+        ? 'Loading…'
+        : me.isError
+          ? 'Unavailable'
+          : (me.data.displayName ?? 'Not set yet'),
+    ],
+    ['Charting', trackingLabel(me.data?.trackingBBT, me.data?.trackingMucus)],
+    ['Role', me.data?.role ?? '—'],
+  ];
+
   return (
     <section aria-labelledby="profile-title" className="space-y-6">
-      <header className="space-y-1">
-        <h1 id="profile-title" className="text-2xl font-semibold tracking-tight">
-          Profile
+      <header>
+        <Eyebrow>Your account</Eyebrow>
+        <h1 id="profile-title" className="mt-2 font-display text-display text-ink">
+          {me.data?.displayName ?? 'You'}
         </h1>
-        <p className="text-muted">Your export and delete controls arrive in Task 12.</p>
       </header>
 
-      <dl className="rounded-card bg-white p-4 ring-1 ring-primary/5">
-        <div className="flex justify-between gap-4 py-1.5">
-          <dt className="text-sm text-muted">Signed in as</dt>
-          <dd className="truncate text-sm font-medium">{email ?? '—'}</dd>
-        </div>
-        <div className="flex justify-between gap-4 py-1.5">
-          <dt className="text-sm text-muted">Display name</dt>
-          <dd className="text-sm font-medium">
-            {me.isPending
-              ? 'Loading…'
-              : me.isError
-                ? 'Unavailable'
-                : (me.data.displayName ?? 'Not set yet')}
-          </dd>
-        </div>
-        <div className="flex justify-between gap-4 py-1.5">
-          <dt className="text-sm text-muted">Role</dt>
-          <dd className="text-sm font-medium">{me.data?.role ?? '—'}</dd>
-        </div>
-      </dl>
+      <Card>
+        <dl className="divide-y divide-line px-5">
+          {rows.map(([term, value]) => (
+            <div key={term} className="flex justify-between gap-4 py-3.5">
+              <dt className="text-sm text-muted">{term}</dt>
+              <dd className="max-w-[60%] truncate text-right text-sm font-medium text-ink">
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </Card>
+
+      <Card tone="quiet" className="p-4">
+        <p className="text-sm leading-relaxed text-ink-soft">
+          Exporting your data and deleting your account arrive in Task 12.
+        </p>
+      </Card>
 
       <Button variant="secondary" onClick={onSignOut}>
         Sign out
       </Button>
     </section>
   );
+}
+
+function trackingLabel(bbt?: boolean, mucus?: boolean): string {
+  const signals = [bbt && 'temperature', mucus && 'mucus'].filter(Boolean);
+  return signals.length ? signals.join(' and ') : 'Not charting';
 }

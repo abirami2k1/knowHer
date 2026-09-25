@@ -1,5 +1,6 @@
 import type { OnboardingDraft } from '@/hooks/useOnboarding';
 import { formatCalendarDate } from '@/lib/dates';
+import { Card } from '@/components/ui/Card';
 import { AGE_BAND_OPTIONS, CONDITION_OPTIONS, GOAL_OPTIONS } from '../copy';
 import { StepLayout } from './StepLayout';
 
@@ -48,14 +49,16 @@ export function ConfirmStep({ draft }: { draft: OnboardingDraft }) {
       }
       intro="Have a quick look. Use Back to change anything — nothing has been saved yet."
     >
-      <dl className="divide-y divide-primary/10 rounded-card bg-white px-4 ring-1 ring-primary/10">
-        {rows.map((row) => (
-          <div key={row.term} className="flex justify-between gap-4 py-3">
-            <dt className="text-sm text-muted">{row.term}</dt>
-            <dd className="max-w-[60%] text-right text-sm font-medium text-ink">{row.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <Card>
+        <dl className="divide-y divide-line px-5">
+          {rows.map((row) => (
+            <div key={row.term} className="flex justify-between gap-4 py-3.5">
+              <dt className="text-sm text-muted">{row.term}</dt>
+              <dd className="max-w-[60%] text-right text-sm font-medium text-ink">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Card>
     </StepLayout>
   );
 }

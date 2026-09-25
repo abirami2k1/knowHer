@@ -22,11 +22,11 @@ export function PeriodStartPrompt({
 }) {
   return (
     <Sheet open={open} onClose={onDismiss} title="Is this the start of your period?">
-      <p className="text-muted">
+      <p className="text-[15px] leading-relaxed text-ink-soft">
         You logged bleeding on {formatCalendarDate(date)}. If that was the first day of your period,
         knowHer will start a new cycle from it.
       </p>
-      <p className="mt-3 text-sm text-muted">
+      <p className="mt-3 text-sm leading-relaxed text-muted">
         If you're not sure, leave it for now — the day stays logged either way, and you can say so
         later.
       </p>

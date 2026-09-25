@@ -35,6 +35,11 @@ export function listCycles(userId: string): Promise<Cycle[]> {
   return prisma.cycle.findMany({ where: { userId }, orderBy: { startDate: 'desc' } });
 }
 
+/** One of her cycles by id. Ownership is part of the lookup, never a later check. */
+export function findCycle(userId: string, id: string): Promise<Cycle | null> {
+  return prisma.cycle.findFirst({ where: { id, userId } });
+}
+
 /** The open cycle (no endDate), if she has one. */
 export function currentCycle(userId: string): Promise<Cycle | null> {
   return prisma.cycle.findFirst({

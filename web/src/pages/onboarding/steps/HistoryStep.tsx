@@ -2,6 +2,7 @@ import { ChoiceList } from '@/components/ui/ChoiceList';
 import { Field } from '@/components/ui/Field';
 import type { OnboardingDraft } from '@/hooks/useOnboarding';
 import { todayIsoDate } from '@/lib/dates';
+import { Card } from '@/components/ui/Card';
 import { CYCLE_LENGTH_HINT, PERIOD_LENGTH_HINT, WHY } from '../copy';
 import { StepLayout } from './StepLayout';
 
@@ -43,10 +44,12 @@ export function HistoryStep({ draft, set }: StepProps) {
       )}
 
       {draft.knowsLastPeriod === 'not_sure' && (
-        <p className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">
-          That's completely fine. We'll start your first cycle the day you log your next period —
-          nothing is guessed in the meantime.
-        </p>
+        <Card tone="quiet" className="p-4">
+          <p className="text-[15px] leading-relaxed text-ink-soft">
+            That's completely fine. We'll start your first cycle the day you log your next period —
+            nothing is guessed in the meantime.
+          </p>
+        </Card>
       )}
 
       <div className="space-y-4">

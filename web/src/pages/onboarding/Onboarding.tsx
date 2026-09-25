@@ -40,13 +40,14 @@ export default function Onboarding() {
   const { draft, step, set, toggleCondition, toggleGoal } = flow;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
-      <div className="mb-6 space-y-2">
-        <p className="text-sm text-muted" role="status" aria-live="polite">
+    <main className="grain mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 py-8">
+      <div aria-hidden className="grain-after" />
+      <div className="mb-8 space-y-2.5">
+        <p className="eyebrow text-muted" role="status" aria-live="polite">
           Step {flow.stepNumber} of {flow.stepCount}
         </p>
         <div
-          className="h-1.5 overflow-hidden rounded-full bg-primary/10"
+          className="h-1 overflow-hidden rounded-pill bg-surface-sunken"
           role="progressbar"
           aria-valuenow={flow.stepNumber}
           aria-valuemin={1}

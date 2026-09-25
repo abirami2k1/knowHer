@@ -14,7 +14,7 @@ export function Field({ label, hint, error, id, className = '', ...rest }: Field
   const errorId = error ? `${inputId}-error` : undefined;
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <label htmlFor={inputId} className="block text-sm font-medium text-ink">
         {label}
       </label>
@@ -23,10 +23,12 @@ export function Field({ label, hint, error, id, className = '', ...rest }: Field
         id={inputId}
         aria-invalid={error ? true : undefined}
         aria-describedby={[hintId, errorId].filter(Boolean).join(' ') || undefined}
-        className={`block min-h-12 w-full rounded-card bg-white px-4 text-base text-ink ring-1 ring-primary/20 placeholder:text-muted/70 focus:ring-2 focus:ring-primary focus:outline-none ${error ? 'ring-primary' : ''} ${className}`}
+        className={`block min-h-12 w-full rounded-2xl bg-surface px-4 text-base text-ink ring-1 transition-shadow placeholder:text-muted/70 focus:ring-2 focus:ring-primary focus:outline-none ${
+          error ? 'ring-primary' : 'ring-line'
+        } ${className}`}
       />
       {hint && !error && (
-        <p id={hintId} className="text-sm text-muted">
+        <p id={hintId} className="text-sm leading-relaxed text-muted">
           {hint}
         </p>
       )}

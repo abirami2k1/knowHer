@@ -1,26 +1,118 @@
 @import 'tailwindcss';
 
+/* Bundled, not fetched: the PWA has to look like itself offline too. */
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/inter';
+
 /*
  * Brand tokens — defined once, here, per coding-standards (Tailwind v4, no tailwind.config).
- * Use them as utilities: bg-primary, text-ink, bg-bg-soft, text-calm, rounded-card …
+ *
+ * The palette is warm and editorial: paper rather than white, ink rather than
+ * black, and one fearless red that earns its place by being used sparingly.
+ *
+ * Phase colours carry meaning, so they are tokens rather than decoration. Each
+ * phase has a tint (a surface she can read on) and an ink (its text and marks).
+ * They are ordered as the cycle runs: bleeding, building, peak, winding down.
+ *
+ * Every ink is dark enough to clear WCAG AA (4.5:1) on both the page and its own
+ * tint — these are body-text colours, not accents, so "nearly readable" is not
+ * good enough.
  */
 @theme {
-  --color-primary: #b22222; /* bold, fearless red */
+  /* Brand */
+  --color-primary: #a51f2d; /* bold, fearless red */
+  --color-primary-soft: #d4737c;
   --color-accent: #e86a5c;
-  --color-bg-soft: #fff6f4;
-  --color-ink: #2a2a2a;
-  --color-calm: #3fa796;
-  --color-muted: #7a6f6d;
+  --color-calm: #2f6f66;
 
-  --radius-card: 1.25rem;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Surfaces & text */
+  --color-paper: #fdf7f4; /* the page */
+  --color-surface: #fffdfc; /* cards sitting on it */
+  --color-surface-sunken: #f7ece7;
+  --color-ink: #2b2220;
+  --color-ink-soft: #5c4f4b;
+  --color-muted: #75655f;
+  --color-line: #e8d9d3;
+
+  /* Cycle phases */
+  --color-menstrual: #a51f2d;
+  --color-menstrual-tint: #f8e4e2;
+  --color-follicular: #2f6f66;
+  --color-follicular-tint: #e2efeb;
+  --color-ovulatory: #8f5a12;
+  --color-ovulatory-tint: #f9eddb;
+  --color-luteal: #7b5a86;
+  --color-luteal-tint: #efe7f2;
+  --color-unknown: #75655f;
+  --color-unknown-tint: #f1e9e5;
+
+  /* Type */
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --text-display: 2.5rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.02em;
+  --text-title: 1.75rem;
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.015em;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.14em;
+
+  /* Shape & depth — soft, never glossy */
+  --radius-card: 1.5rem;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgb(43 34 32 / 0.04), 0 8px 24px -12px rgb(43 34 32 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(43 34 32 / 0.06), 0 20px 40px -20px rgb(43 34 32 / 0.25);
 }
 
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
   }
+
   body {
-    @apply bg-bg-soft text-ink antialiased;
+    @apply bg-paper text-ink antialiased;
+    font-family: var(--font-sans);
+    font-optical-sizing: auto;
   }
+
+  /* Display type is the voice of the app: warm, soft-serif, never shouty. */
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-variation-settings:
+      'SOFT' 40,
+      'WONK' 1;
+    font-weight: 500;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@utility eyebrow {
+  font-size: var(--text-eyebrow);
+  line-height: var(--text-eyebrow--line-height);
+  letter-spacing: var(--text-eyebrow--letter-spacing);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* A quiet paper grain, so large warm fields do not read as flat plastic. */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+}
+@utility grain-after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.35;
+  background-image: radial-gradient(circle at 1px 1px, rgb(165 31 45 / 0.07) 1px, transparent 0);
+  background-size: 14px 14px;
 }

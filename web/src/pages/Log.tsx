@@ -5,12 +5,13 @@ import { DaySummary } from '@/components/log/DaySummary';
 import { LogForm } from '@/components/log/LogForm';
 import { PeriodStartPrompt } from '@/components/log/PeriodStartPrompt';
 import { Button } from '@/components/ui/Button';
+import { Card, Eyebrow } from '@/components/ui/Card';
 import { Sheet } from '@/components/ui/Sheet';
 import { cycleCovers, useCycles, useStartCycle } from '@/hooks/useCycles';
 import { toBody, useLogDraft } from '@/hooks/useLogDraft';
 import { useDayLog, useSaveLog } from '@/hooks/useLogs';
 import { useMe } from '@/hooks/useMe';
-import { todayIsoDate } from '@/lib/dates';
+import { formatCalendarDate, todayIsoDate } from '@/lib/dates';
 import { PERIOD_FLOWS } from '@/pages/log/copy';
 
 export default function Log() {
@@ -50,22 +51,29 @@ export default function Log() {
   }
 
   return (
-    <section aria-labelledby="log-title" className="space-y-5">
-      <header className="space-y-1">
-        <h1 id="log-title" className="text-2xl font-semibold tracking-tight">
-          Daily log
+    <section aria-labelledby="log-title" className="space-y-6">
+      <header>
+        <Eyebrow>Daily log</Eyebrow>
+        <h1 id="log-title" className="mt-2 font-display text-display text-ink">
+          How was today?
         </h1>
-        <p className="text-muted">One entry a day. Past days are always open to fill in.</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-muted">
+          One entry a day. Past days are always open to fill in.
+        </p>
       </header>
 
       <DateSwitcher date={date} onChange={setDate} />
 
       {day.isPending ? (
-        <p className="rounded-card bg-white p-4 text-muted ring-1 ring-primary/10">Loading…</p>
+        <Card tone="quiet" className="p-5">
+          <p className="text-muted">Loading…</p>
+        </Card>
       ) : day.isError ? (
-        <p role="alert" className="rounded-card bg-white p-4 text-primary ring-1 ring-primary/10">
-          Couldn't load this day. Check your connection and try again.
-        </p>
+        <Card className="p-5">
+          <p role="alert" className="text-primary">
+            Couldn't load this day. Check your connection and try again.
+          </p>
+        </Card>
       ) : (
         <DaySummary log={day.log} />
       )}
@@ -77,7 +85,7 @@ export default function Log() {
       <Sheet
         open={sheetOpen}
         onClose={() => setSheetOpen(false)}
-        title={date === todayIsoDate() ? 'Today' : date}
+        title={date === todayIsoDate() ? 'Today' : formatCalendarDate(date)}
         footer={
           <Button onClick={onSave} loading={save.isPending}>
             Save

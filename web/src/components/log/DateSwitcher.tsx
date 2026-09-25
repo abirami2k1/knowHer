@@ -18,7 +18,7 @@ export function DateSwitcher({
         type="button"
         onClick={() => onChange(shiftDate(date, -1))}
         aria-label="Previous day"
-        className="flex size-11 shrink-0 items-center justify-center rounded-card bg-white text-ink ring-1 ring-primary/20 hover:bg-bg-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="flex size-11 shrink-0 items-center justify-center rounded-pill bg-surface text-ink ring-1 ring-line transition-colors hover:bg-surface-sunken"
       >
         <ChevronLeft className="size-5" aria-hidden />
       </button>
@@ -30,9 +30,9 @@ export function DateSwitcher({
           value={date}
           max={today}
           onChange={(e) => e.target.value && onChange(e.target.value)}
-          className="min-h-11 w-full rounded-card bg-white px-3 text-center text-base font-medium text-ink ring-1 ring-primary/20 focus:ring-2 focus:ring-primary focus:outline-none"
+          className="min-h-11 w-full rounded-pill bg-surface px-3 text-center text-base font-medium text-ink ring-1 ring-line focus:ring-2 focus:ring-primary focus:outline-none"
         />
-        <span className="mt-1 block text-sm text-muted">
+        <span className="eyebrow mt-1.5 block text-muted">
           {isToday ? 'Today' : formatCalendarDate(date)}
         </span>
       </label>
@@ -42,7 +42,7 @@ export function DateSwitcher({
         onClick={() => onChange(shiftDate(date, 1))}
         disabled={isToday}
         aria-label="Next day"
-        className="flex size-11 shrink-0 items-center justify-center rounded-card bg-white text-ink ring-1 ring-primary/20 hover:bg-bg-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-40"
+        className="flex size-11 shrink-0 items-center justify-center rounded-pill bg-surface text-ink ring-1 ring-line transition-colors hover:bg-surface-sunken disabled:opacity-35"
       >
         <ChevronRight className="size-5" aria-hidden />
       </button>
