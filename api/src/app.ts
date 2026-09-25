@@ -7,6 +7,7 @@ import { fail } from './lib/respond';
 import { errorHandler, notFoundHandler } from './middleware/error-handler';
 import { healthRouter } from './routes/health';
 import { meRouter } from './routes/me';
+import { onboardingRouter } from './routes/onboarding';
 
 /**
  * Builds the Express app without binding a port, so tests can mount it
@@ -37,6 +38,7 @@ export function createApp() {
 
   app.use(healthRouter);
   app.use(meRouter);
+  app.use(onboardingRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

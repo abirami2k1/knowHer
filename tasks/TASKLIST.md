@@ -129,19 +129,19 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Task 5 — ONBOARDING
 
 ### Task 5.1 — API `[api]`
-- [ ] **5.1.1** `PATCH /me` / `POST /onboarding` saves profile, conditions, goals, trackingBBT (Zod-validated). AC: persists.
-- [ ] **5.1.2** If last-period date given → create first `Cycle`; if "not sure" → open cycle / honest start. AC: cycle row correct per input.
+- [x] **5.1.1** `PATCH /me` / `POST /onboarding` saves profile, conditions, goals, trackingBBT (Zod-validated). AC: persists.
+- [x] **5.1.2** If last-period date given → create first `Cycle`; if "not sure" → open cycle / honest start. AC: cycle row correct per input.
 
 ### Task 5.2 — Flow UI `[web]`
-- [ ] **5.2.1** Step 1 Welcome (tone). AC: renders, advances.
-- [ ] **5.2.2** Step 2 Profile (name, age band). AC: captured.
-- [ ] **5.2.3** Step 3 Period history with **"not sure"** option. AC: skip path works.
-- [ ] **5.2.4** Step 4 Health context (PCOD/PMDD/Endo/none/unsure). AC: captured.
-- [ ] **5.2.5** Step 5 Goals (multi-select). AC: captured.
-- [ ] **5.2.6** Step 6 (conditional) BBT/mucus setup if ovulation goal chosen. AC: shows only when relevant.
-- [ ] **5.2.7** Step 7 Confirmation → dashboard. AC: lands on Home.
-- [ ] **5.2.8** Progress indicator, back nav, Framer transitions. AC: smooth on mobile.
-- [ ] **5.2.9** Returning users skip onboarding. AC: completed users go straight to app.
+- [x] **5.2.1** Step 1 Welcome (tone). AC: renders, advances.
+- [x] **5.2.2** Step 2 Profile (name, age band). AC: captured.
+- [x] **5.2.3** Step 3 Period history with **"not sure"** option. AC: skip path works.
+- [x] **5.2.4** Step 4 Health context (PCOD/PMDD/Endo/none/unsure). AC: captured.
+- [x] **5.2.5** Step 5 Goals (multi-select). AC: captured.
+- [x] **5.2.6** Step 6 (conditional) BBT/mucus setup if ovulation goal chosen. AC: shows only when relevant.
+- [x] **5.2.7** Step 7 Confirmation → dashboard. AC: lands on Home.
+- [x] **5.2.8** Progress indicator, back nav, Framer transitions. AC: smooth on mobile.
+- [x] **5.2.9** Returning users skip onboarding. AC: completed users go straight to app.
 
 **Task 5 done when:** new user finishes onboarding, data persists, first cycle (or honest start) exists.
 

@@ -42,3 +42,23 @@ export interface UserProfile {
   onboardedAt: string | null;
   createdAt: string;
 }
+
+/**
+ * POST /onboarding — the single submit at the end of the flow.
+ * Every "not sure" answer is expressed by leaving its field out; `today` is the
+ * user's own calendar day and travels with `lastPeriodStart` (D1).
+ */
+export interface OnboardingRequest {
+  displayName: string;
+  ageBand: AgeBand;
+  conditions: Condition[];
+  goals: Goal[];
+  trackingBBT: boolean;
+  trackingMucus: boolean;
+  avgCycleLength?: number;
+  avgPeriodLength?: number;
+  /** 'YYYY-MM-DD' */
+  lastPeriodStart?: string;
+  /** 'YYYY-MM-DD' */
+  today?: string;
+}
