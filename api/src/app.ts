@@ -5,7 +5,9 @@ import helmet from 'helmet';
 import { CONFIG } from './config';
 import { fail } from './lib/respond';
 import { errorHandler, notFoundHandler } from './middleware/error-handler';
+import { cyclesRouter } from './routes/cycles';
 import { healthRouter } from './routes/health';
+import { logsRouter } from './routes/logs';
 import { meRouter } from './routes/me';
 import { onboardingRouter } from './routes/onboarding';
 
@@ -39,6 +41,8 @@ export function createApp() {
   app.use(healthRouter);
   app.use(meRouter);
   app.use(onboardingRouter);
+  app.use(logsRouter);
+  app.use(cyclesRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
