@@ -207,10 +207,10 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Task 9 — CYCLE HISTORY (calendar)
 
-- [ ] **9.0.1** `[api]` `GET /history?month` → logged days + markers. AC: returns data.
-- [ ] **9.0.2** `[web]` Month calendar, mobile-first, period/spotting symbols. AC: renders real data.
-- [ ] **9.0.3** `[web]` Tap day → read-only entry + edit shortcut. AC: opens entry.
-- [ ] **9.0.4** `[web]` Month navigation; **no predicted days**. AC: no forecast shown anywhere.
+- [x] **9.0.1** `[api]` `GET /history?month` → logged days + markers. AC: returns data.
+- [x] **9.0.2** `[web]` Month calendar, mobile-first, period/spotting symbols. AC: renders real data.
+- [x] **9.0.3** `[web]` Tap day → read-only entry + edit shortcut. AC: opens entry.
+- [x] **9.0.4** `[web]` Month navigation; **no predicted days**. AC: no forecast shown anywhere.
 
 **Task 9 done when:** calendar shows only real logs; day detail works; zero predictions on calendar.
 

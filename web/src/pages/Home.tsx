@@ -1,4 +1,4 @@
-import { ArrowRight, LineChart, PenLine } from 'lucide-react';
+import { ArrowRight, CalendarDays, LineChart, PenLine } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ExpectedOvulation } from '@/components/home/ExpectedOvulation';
 import { TodayCard } from '@/components/home/TodayCard';
@@ -19,6 +19,12 @@ const SHORTCUTS = [
     icon: LineChart,
     title: 'Your chart',
     body: 'Temperatures, mucus and what they add up to — read after the fact, never predicted.',
+  },
+  {
+    to: '/history',
+    icon: CalendarDays,
+    title: 'Your history',
+    body: 'A calendar of the days you logged. Only what happened — nothing forecast.',
   },
 ];
 

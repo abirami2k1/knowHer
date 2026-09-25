@@ -197,3 +197,17 @@ export interface DashboardDto {
   cycleLengthTypical: number | null;
   fallback: FallbackReason | null;
 }
+
+// ── History ──────────────────────────────────────────────────────────────
+
+/**
+ * One logged day on the calendar. Only facts: what she recorded, and whether she
+ * marked a period start. No prediction reaches this screen by design.
+ */
+export interface HistoryDayDto {
+  date: string;
+  flow: Flow | null;
+  hasTemp: boolean;
+  symptomCount: number;
+  isCycleStart: boolean;
+}

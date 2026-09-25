@@ -9,6 +9,7 @@ import { assessmentRouter } from './routes/assessment';
 import { cyclesRouter } from './routes/cycles';
 import { dashboardRouter } from './routes/dashboard';
 import { healthRouter } from './routes/health';
+import { historyRouter } from './routes/history';
 import { logsRouter } from './routes/logs';
 import { meRouter } from './routes/me';
 import { onboardingRouter } from './routes/onboarding';
@@ -47,6 +48,7 @@ export function createApp() {
   app.use(cyclesRouter);
   app.use(assessmentRouter);
   app.use(dashboardRouter);
+  app.use(historyRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

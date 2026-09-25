@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { DateSwitcher } from '@/components/log/DateSwitcher';
 import { DaySummary } from '@/components/log/DaySummary';
@@ -15,7 +16,12 @@ import { formatCalendarDate, todayIsoDate } from '@/lib/dates';
 import { PERIOD_FLOWS } from '@/pages/log/copy';
 
 export default function Log() {
-  const [date, setDate] = useState(todayIsoDate());
+  // ?date= lets the history calendar hand a specific day straight to the editor.
+  const [searchParams] = useSearchParams();
+  const requested = searchParams.get('date');
+  const [date, setDate] = useState(
+    requested && requested <= todayIsoDate() ? requested : todayIsoDate(),
+  );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [promptOpen, setPromptOpen] = useState(false);
 
