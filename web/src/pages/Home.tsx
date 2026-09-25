@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useHealth } from '@/hooks/useHealth';
 
 function statusLabel(health: ReturnType<typeof useHealth>): { text: string; tone: string } {
@@ -19,6 +20,16 @@ export default function Home() {
         </h1>
         <p className="text-muted">A warm, fearless companion for your cycle.</p>
       </header>
+
+      <Link
+        to="/cycle"
+        className="block rounded-card bg-white p-4 shadow-sm ring-1 ring-primary/5 hover:bg-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        <h2 className="text-base font-medium text-ink">Your chart</h2>
+        <p className="mt-1 text-sm text-muted">
+          Temperatures, mucus and what they add up to — confirmed after the fact, never predicted.
+        </p>
+      </Link>
 
       <div className="rounded-card bg-white p-4 shadow-sm ring-1 ring-primary/5">
         <h2 className="text-sm font-medium text-muted">API status</h2>

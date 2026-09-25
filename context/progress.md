@@ -22,9 +22,9 @@ Last updated: 2026-09-24
 ---
 
 ## Currently working on
-- Task: **7.1.1** — `GET /cycles/:id/assessment`. Task 6 is code-complete; the log UI wants a founder click-through (log today, backfill a past day, confirm a period start).
-- Branch: `feature/daily-log`. The API half is committed (72b009d); the UI half is uncommitted.
-- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open; neither blocks Task 7. Dev servers running on :4000 and :5173.
+- Task: **8.0.1** — `GET /dashboard` (phase, expected-ovulation estimate, insight). Task 7 is code-complete; the chart wants a founder look with real logged data.
+- Branch: `feature/cycle-tracker`. Uncommitted.
+- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open. Task 8 is where `phase.ts` / `estimate.ts` join the engine per the engine plan — the Sivi answers matter more from here on.
 
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
@@ -33,7 +33,7 @@ Last updated: 2026-09-24
 - [~] Task 4 — Cycle rule engine (pure + tests) — code + synthetic fixtures done; 4.4.0 Sivi gate open
 - [x] Task 5 — Onboarding
 - [x] Task 6 — Daily Log + Period Tracker (founder browser click-through pending)
-- [ ] Task 7 — Cycle Tracker UI
+- [x] Task 7 — Cycle Tracker UI (founder browser look pending)
 - [ ] Task 8 — Dashboard
 - [ ] Task 9 — Cycle History (calendar)
 - [ ] Task 10 — Trends
@@ -142,12 +142,22 @@ Last updated: 2026-09-24
 - [x] 6.3.6 date switcher for backfill (no future days)
 - [x] 6.3.7 save/edit states + toasts
 
-_(Add Task 7+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 7 — Cycle Tracker UI
+- [x] 7.1.1 GET /cycles/:id/assessment (engine on read + chart rows + copy)
+- [x] 7.2.1 Recharts BBT chart, Y domain scaled for the ~0.4°F shift
+- [x] 7.2.2 coverline as a reference line
+- [x] 7.2.3 ovulation + peak markers, luteal shading
+- [x] 7.2.4 mucus symbol row aligned by cycle day
+- [x] 7.3.1–7.3.3 anovulatory / low-data / disagreement states, all from the API's copy map
+- [x] 7.3.4 no cycle math on the screen — only chart scaling
+
+_(Add Task 8+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-24 — Task 7 done. `GET /cycles/:id/assessment` runs the engine over the logs the cycle's interval contains and returns `{ cycle, assessment, copy }`, where `copy` holds only the wording for the states this cycle actually reports — the UI never writes cycle words of its own. **Deviation from D4 worth knowing:** the stored snapshot has six summary fields and no chart rows, so this endpoint re-runs the engine for closed cycles too; the snapshot stays the cheap read for Trends. Web: recharts 3.10 added; `BbtChart` plots by cycle day with the Y domain padded (−0.2/+0.3 °F) so the shift is visible, coverline as a dashed ReferenceLine, ovulation and peak as ReferenceLines, luteal stretch as a ReferenceArea drawn only once ovulation is confirmed, and disturbed/excluded readings drawn hollow — plotted, visibly not counted. `MucusRow` is a plain flex row aligned by cycle day (Sivi's symbols, with a legend and screen-reader text per day). `CycleFacts` shows only confirmed values, and names the day ovulation was *confirmed* alongside the day it occurred. `CycleNotes` renders the flag and confidence copy verbatim. New /cycle route, linked from Home. Smoke-tested against a realistic 28-day ovulatory chart: ovulation day 14, confirmed day 17, peak day 14, confidence full.
 - 2026-09-24 — 6.3.x done: `components/ui/Sheet.tsx` is a new bottom-sheet primitive (Escape and backdrop close it, focus moves in on open, the page behind is locked from scrolling, reduced-motion respected) — the app's main entry surface on a phone. `hooks/useLogDraft.ts` holds the day being edited, keeping text fields as strings so an empty box means "nothing recorded" rather than zero, and `toBody` sends every field so clearing one actually clears it. `components/log/LogForm.tsx` is presentational only — the tracker sections appear solely for the signals she tracks (BBT gated on trackingBBT; mucus *and* cervix on trackingMucus, grouped as fertility signs — worth a second look if you want cervix separate). Flow is always available, since it is what triggers the period-start ask. `PeriodStartPrompt` implements D3: bleeding beyond spotting on a day no cycle covers asks whether her period started; declining leaves the day logged as an orphan bleeding day and starts nothing. `DateSwitcher` backfills freely but has no tomorrow. Log page wires it together with toasts; `shiftDate` joined `lib/dates.ts` so day arithmetic stays in one place. Both builds, both lints and repo prettier green; 114 api tests green.
 - 2026-09-24 — 6.2.x done: boundary arithmetic extracted into `services/cycle-intervals.ts` as pure planners (`planStart`, `planEditStart`) so every edge case is unit-testable without a database — CI has no Postgres, and DB-backed tests would have gone untested there. `services/cycles.ts` now only applies plans: it owns `logsForCycle` (the one place membership is resolved, D2), `toEngineInput` (cycle day from the interval start; Decimal → number at the boundary), `assess`, and `refreshSnapshot` (closed cycles only — live ones are computed on read, D4). Snapshot writes happen outside the boundary transaction, so a derived-data failure can never undo the boundary the user just recorded. Backfilling a start inside existing history splits that cycle and the new half inherits the end of the interval it split, instead of being left open in the middle; only an exact duplicate start date is refused (409). Routes: GET/POST /cycles, PATCH /cycles/:id. A log write inside a closed cycle's range now refreshes that cycle's snapshot. 17 planner tests — one of which caught a real inverted sort comparator that picked the *earliest* neighbouring cycle instead of the latest once three cycles existed. DB smoke test covered split, derived membership, duplicate refusal, start edit and a live assessment.
 - 2026-09-24 — 6.1.x done: `/shared/vocab.ts` (MOODS, SYMPTOMS, energy bounds) is the controlled vocabulary both apps and Zod share. `schemas/logs.ts` validates the whole day: every field optional except the date (a day with only a mood is a real day), null means "clear this" while absent means "leave alone", `today` bounds the date (no future days, 365 days of backfill), tempTakenAt is a local HH:mm, a disturbed *reason* requires the flag (the engine only reads the flag), and bbtF is two-decimal-checked with a tolerance because 97.65 * 100 is 9764.999999999998 in binary floating point — an exact test would have rejected real readings. `services/logs.ts` upserts on (userId, date), so saving, editing, backfilling and an offline replay are all one operation (last-write-wins, D5). PUT /logs + GET /logs?from&to. 14 schema tests; DB smoke test confirmed partial edits preserve untouched fields, null clears one field only, and bbtF round-trips exactly as a number.

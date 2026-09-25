@@ -175,19 +175,19 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Task 7 — CYCLE TRACKER UI
 
 ### Task 7.1 — Assess API `[api]`
-- [ ] **7.1.1** `GET /cycles/:id/assessment` runs `assessCycle` on logs fetched by the cycle's date range. AC: returns summary object.
+- [x] **7.1.1** `GET /cycles/:id/assessment` runs `assessCycle` on logs fetched by the cycle's date range. AC: returns summary object.
 
 ### Task 7.2 — Chart `[web]`
-- [ ] **7.2.1** Recharts BBT chart: X=cycle day, Y=°F scaled for the ~0.4°F shift. AC: temps plot.
-- [ ] **7.2.2** Draw **coverline** as reference line when present. AC: line appears on ovulatory fixture.
-- [ ] **7.2.3** Mark ovulation day, peak day, shade luteal phase. AC: markers correct.
-- [ ] **7.2.4** Mucus symbols row aligned to cycle days (Sivi's symbols). AC: aligned.
+- [x] **7.2.1** Recharts BBT chart: X=cycle day, Y=°F scaled for the ~0.4°F shift. AC: temps plot.
+- [x] **7.2.2** Draw **coverline** as reference line when present. AC: line appears on ovulatory fixture.
+- [x] **7.2.3** Mark ovulation day, peak day, shade luteal phase. AC: markers correct.
+- [x] **7.2.4** Mucus symbols row aligned to cycle days (Sivi's symbols). AC: aligned.
 
 ### Task 7.3 — Honest states `[web]`
-- [ ] **7.3.1** Anovulatory → calm message (from copy map). AC: no error styling.
-- [ ] **7.3.2** Low data → "keep logging" message. AC: shows under threshold.
-- [ ] **7.3.3** Signal disagreement → show both. AC: message renders.
-- [ ] **7.3.4** Verify: no cycle math in this screen (only calls API). AC: review passes.
+- [x] **7.3.1** Anovulatory → calm message (from copy map). AC: no error styling.
+- [x] **7.3.2** Low data → "keep logging" message. AC: shows under threshold.
+- [x] **7.3.3** Signal disagreement → show both. AC: message renders.
+- [x] **7.3.4** Verify: no cycle math in this screen (only calls API). AC: review passes.
 
 **Task 7 done when:** ovulatory cycle shows full chart; anovulatory/low-data show honest states; UI does no math.
 

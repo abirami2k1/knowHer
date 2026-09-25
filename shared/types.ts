@@ -107,3 +107,62 @@ export interface CycleDto {
   isAnovulatory: boolean;
   confidence: string | null;
 }
+
+// ── Cycle assessment ─────────────────────────────────────────────────────
+// These mirror the engine's output types (api/src/domain/cycle/types.ts). The
+// engine itself stays API-only (D5); this is the shape it is served in.
+
+export type Flag =
+  | 'low_data'
+  | 'no_temp_data'
+  | 'no_mucus_data'
+  | 'disturbed_excluded'
+  | 'false_shift_invalidated'
+  | 'shift_pending'
+  | 'peak_pending'
+  | 'signal_disagreement'
+  | 'anovulatory';
+
+export type Confidence = 'full' | 'reduced' | 'none';
+
+/** One row of the chart, already resolved by the engine — the UI does no math. */
+export interface ChartPoint {
+  cycleDay: number;
+  bbtF: number | null;
+  isDisturbed: boolean;
+  excludedFromRules: boolean;
+  aboveCoverline: boolean | null;
+  tempCount: number | null;
+  lutealDay: number | null;
+  peakCount: number | null;
+  mucus: CervicalMucus | null;
+  flow: Flow | null;
+}
+
+/**
+ * Structural honesty: coverlineF, ovulationDay and peakDay are non-null only
+ * once their confirmation day has actually been logged. There is no "likely"
+ * field, because there is nothing honest to put in one.
+ */
+export interface CycleAssessmentDto {
+  coverlineF: number | null;
+  coverlineWindowDays: number[];
+  dipDay: number | null;
+  ovulationDay: number | null;
+  shiftConfirmedOnDay: number | null;
+  peakDay: number | null;
+  peakConfirmedOnDay: number | null;
+  lutealLength: number | null;
+  lutealDayToday: number | null;
+  isAnovulatory: boolean;
+  confidence: Confidence;
+  flags: Flag[];
+  series: ChartPoint[];
+}
+
+/** GET /cycles/:id/assessment. `copy` carries the wording for the states reported. */
+export interface AssessmentResponse {
+  cycle: CycleDto;
+  assessment: CycleAssessmentDto;
+  copy: Record<string, string>;
+}
