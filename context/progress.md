@@ -22,9 +22,9 @@ Last updated: 2026-09-24
 ---
 
 ## Currently working on
-- Task: **6.1.1** — `PUT /logs` upsert by (userId, date).
-- Branch: `feature/daily-log` (Task 6). `feature/onboarding` merged to main.
-- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open; neither blocks Task 6.
+- Task: **7.1.1** — `GET /cycles/:id/assessment`. Task 6 is code-complete; the log UI wants a founder click-through (log today, backfill a past day, confirm a period start).
+- Branch: `feature/daily-log`. The API half is committed (72b009d); the UI half is uncommitted.
+- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open; neither blocks Task 7. Dev servers running on :4000 and :5173.
 
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
@@ -32,7 +32,7 @@ Last updated: 2026-09-24
 - [x] Task 3 — Auth (Cognito)
 - [~] Task 4 — Cycle rule engine (pure + tests) — code + synthetic fixtures done; 4.4.0 Sivi gate open
 - [x] Task 5 — Onboarding
-- [ ] Task 6 — Daily Log + Period Tracker
+- [x] Task 6 — Daily Log + Period Tracker (founder browser click-through pending)
 - [ ] Task 7 — Cycle Tracker UI
 - [ ] Task 8 — Dashboard
 - [ ] Task 9 — Cycle History (calendar)
@@ -127,12 +127,30 @@ Last updated: 2026-09-24
 - [x] 5.2.8 Progress indicator, back nav, Framer transitions (reduced-motion respected)
 - [x] 5.2.9 Returning users skip onboarding (RequireAuth redirect + Navigate out of the flow)
 
-_(Add Task 6+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 6 — Daily Log + Period Tracker
+- [x] 6.1.1 PUT /logs upsert by (userId, date)
+- [x] 6.1.2 GET /logs?from&to
+- [x] 6.1.3 backfill/edit of past dates (same upsert; bounded at 365 days back)
+- [x] 6.2.1 startCycle closes the previous cycle and splits on backfill
+- [x] 6.2.2 editCycleStart moves intervals only — logs are never reassigned
+- [x] 6.2.3 pure interval-planner unit tests (17)
+- [x] 6.3.1 bottom sheet for the day (mood, energy, symptoms)
+- [x] 6.3.2 flow control (always available; it is what triggers the period-start ask)
+- [x] 6.3.3 BBT + time + unusual-reading toggle, gated on trackingBBT
+- [x] 6.3.4 mucus picker with reference hints, gated on trackingMucus
+- [x] 6.3.5 cervix position, gated on trackingMucus
+- [x] 6.3.6 date switcher for backfill (no future days)
+- [x] 6.3.7 save/edit states + toasts
+
+_(Add Task 7+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-24 — 6.3.x done: `components/ui/Sheet.tsx` is a new bottom-sheet primitive (Escape and backdrop close it, focus moves in on open, the page behind is locked from scrolling, reduced-motion respected) — the app's main entry surface on a phone. `hooks/useLogDraft.ts` holds the day being edited, keeping text fields as strings so an empty box means "nothing recorded" rather than zero, and `toBody` sends every field so clearing one actually clears it. `components/log/LogForm.tsx` is presentational only — the tracker sections appear solely for the signals she tracks (BBT gated on trackingBBT; mucus *and* cervix on trackingMucus, grouped as fertility signs — worth a second look if you want cervix separate). Flow is always available, since it is what triggers the period-start ask. `PeriodStartPrompt` implements D3: bleeding beyond spotting on a day no cycle covers asks whether her period started; declining leaves the day logged as an orphan bleeding day and starts nothing. `DateSwitcher` backfills freely but has no tomorrow. Log page wires it together with toasts; `shiftDate` joined `lib/dates.ts` so day arithmetic stays in one place. Both builds, both lints and repo prettier green; 114 api tests green.
+- 2026-09-24 — 6.2.x done: boundary arithmetic extracted into `services/cycle-intervals.ts` as pure planners (`planStart`, `planEditStart`) so every edge case is unit-testable without a database — CI has no Postgres, and DB-backed tests would have gone untested there. `services/cycles.ts` now only applies plans: it owns `logsForCycle` (the one place membership is resolved, D2), `toEngineInput` (cycle day from the interval start; Decimal → number at the boundary), `assess`, and `refreshSnapshot` (closed cycles only — live ones are computed on read, D4). Snapshot writes happen outside the boundary transaction, so a derived-data failure can never undo the boundary the user just recorded. Backfilling a start inside existing history splits that cycle and the new half inherits the end of the interval it split, instead of being left open in the middle; only an exact duplicate start date is refused (409). Routes: GET/POST /cycles, PATCH /cycles/:id. A log write inside a closed cycle's range now refreshes that cycle's snapshot. 17 planner tests — one of which caught a real inverted sort comparator that picked the *earliest* neighbouring cycle instead of the latest once three cycles existed. DB smoke test covered split, derived membership, duplicate refusal, start edit and a live assessment.
+- 2026-09-24 — 6.1.x done: `/shared/vocab.ts` (MOODS, SYMPTOMS, energy bounds) is the controlled vocabulary both apps and Zod share. `schemas/logs.ts` validates the whole day: every field optional except the date (a day with only a mood is a real day), null means "clear this" while absent means "leave alone", `today` bounds the date (no future days, 365 days of backfill), tempTakenAt is a local HH:mm, a disturbed *reason* requires the flag (the engine only reads the flag), and bbtF is two-decimal-checked with a tolerance because 97.65 * 100 is 9764.999999999998 in binary floating point — an exact test would have rejected real readings. `services/logs.ts` upserts on (userId, date), so saving, editing, backfilling and an offline replay are all one operation (last-write-wins, D5). PUT /logs + GET /logs?from&to. 14 schema tests; DB smoke test confirmed partial edits preserve untouched fields, null clears one field only, and bbtF round-trips exactly as a number.
 - 2026-09-24 — Task 5 UI (5.2.1–5.2.9) built. `hooks/useOnboarding.ts` holds the whole flow in a reducer and writes once at the end, so an abandoned onboarding leaves nothing behind; it also owns the condition-exclusivity toggle (picking a real condition drops none/unsure and vice versa, mirroring the API refine), drops the tracking answers if the ovulation goal is unpicked, and exposes `buildRequest` (omits every "not sure" field; `lastPeriodStart` and `today` travel together or not at all). `pages/onboarding/copy.ts` is the single home for option labels and the "why we ask" lines. Steps under `pages/onboarding/steps/` share a `StepLayout`; the tracking step is conditional on the ovulation goal and states plainly that ovulation is confirmed *after* the fact. `components/ui/ChoiceList.tsx` is a new primitive — real radio/checkbox inputs, 48px rows, focus ring on the whole row via `has-focus-visible:` (verified in the built CSS). Container: progress bar (role=progressbar + live step count), back nav, Framer step transitions honouring prefers-reduced-motion, one mutation that seeds the React Query `me` cache and lands on Home. Routing: `/onboarding` sits inside RequireAuth but outside AppShell (no bottom nav mid-flow); RequireAuth now waits for /me and redirects an un-onboarded user in, and the page redirects a finished one out (5.2.9). `lib/dates.ts` (web) supplies the user's own `today` — the server never derives it (D1). Verified: both builds + both lints + repo prettier green, 83 api tests green, /onboarding serves 200 and both write routes answer 401 anonymously. Founder confirmed the click-through in the browser on 2026-09-24.
 - 2026-09-24 — 5.1.2 done: `lib/dates.ts` (api) is the new home for plain-calendar-date helpers — dates are carried as UTC midnight so a Postgres `date` round-trips exactly and no local offset or DST transition can shift a day (12 tests, incl. the 2026-11-01 DST case). `onboardingSchema` gained optional `lastPeriodStart` + `today`, with refines: a date requires the client's own `today` (the server must not invent one, D1), cannot be in the future, and cannot be more than `MAX_LAST_PERIOD_AGE_DAYS` (365) back. New `services/onboarding.ts` (completeOnboarding moved out of users.ts) does the profile write and the first-cycle creation in one transaction, so nobody ends up onboarded-but-cycleless; the cycle is left open with no endDate (the next period start closes it, D3) and a re-submit neither duplicates the cycle nor moves onboardedAt. "Not sure" = the field is simply absent: no cycle, no invented start date. Smoke-tested all three paths against the local DB.
 - 2026-09-24 — 5.1.1 done: zod 4 added to /api; `src/schemas/users.ts` is the single source of profile input validation (AGE_BANDS / CONDITIONS / GOALS mirroring the Prisma enums, `none`/`unsure` refined as exclusive of real conditions, duplicate-free arrays, avgCycleLength 15–90 and avgPeriodLength 1–15 kept deliberately wide for irregular cycles, displayName trimmed 1–40). `updateProfileSchema` = strict partial, rejects an empty body and anything the client must not set (role, id, onboardedAt); `onboardingSchema` = strict, requires displayName + ageBand, defaults the rest, and treats absent cycle lengths as "not sure". `lib/validate.ts` parseBody → AppError 400 `invalid_input` naming fields only, never the submitted values (health data). services/users.ts gained updateProfile + completeOnboarding (onboardedAt preserved on resubmit). Routes: PATCH /me in routes/me.ts, POST /onboarding in routes/onboarding.ts, both behind requireAuth, both returning the toProfile DTO. 68 api tests green (14 schema, 3 parseBody, 3 guard-order), lint + build clean, service path smoke-tested against the local DB. Known: a bare re-submit of POST /onboarding resets the defaulted fields — correct for a whole-form submit, and the web guard routes onboarded users away from the flow.

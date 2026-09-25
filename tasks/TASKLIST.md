@@ -150,23 +150,23 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Task 6 — DAILY LOG + PERIOD TRACKER
 
 ### Task 6.1 — Log API `[api]`
-- [ ] **6.1.1** `POST/PUT /logs` upsert by userId+date (all fields, Zod). AC: create + update by date works.
-- [ ] **6.1.2** `GET /logs?from&to`. AC: returns range.
-- [ ] **6.1.3** Allow backfill/edit of any past date. AC: past date writes succeed.
+- [x] **6.1.1** `POST/PUT /logs` upsert by userId+date (all fields, Zod). AC: create + update by date works.
+- [x] **6.1.2** `GET /logs?from&to`. AC: returns range.
+- [x] **6.1.3** Allow backfill/edit of any past date. AC: past date writes succeed.
 
 ### Task 6.2 — Period→cycle logic `[api]`
-- [ ] **6.2.1** Period **start** creates new `Cycle` interval + closes prior (endDate, length). Logs are never reassigned — membership is derived from date ranges. AC: boundaries correct.
-- [ ] **6.2.2** Editing a start date updates the cycle interval(s) only. AC: no overlapping intervals; range queries return the right logs.
-- [ ] **6.2.3** `[test]` Unit tests for cycle-boundary logic (start mid-history, edit start date, back-to-back periods). AC: green.
+- [x] **6.2.1** Period **start** creates new `Cycle` interval + closes prior (endDate, length). Logs are never reassigned — membership is derived from date ranges. AC: boundaries correct.
+- [x] **6.2.2** Editing a start date updates the cycle interval(s) only. AC: no overlapping intervals; range queries return the right logs.
+- [x] **6.2.3** `[test]` Unit tests for cycle-boundary logic (start mid-history, edit start date, back-to-back periods). AC: green.
 
 ### Task 6.3 — Daily Log UI `[web]`
-- [ ] **6.3.1** Bottom **drawer/sheet** for today: mood, energy, symptoms. AC: saves.
-- [ ] **6.3.2** Flow control shown on bleeding days. AC: conditional render.
-- [ ] **6.3.3** BBT (°F) + time taken + "unusual reading" toggle — only if trackingBBT. AC: gated correctly.
-- [ ] **6.3.4** Mucus type picker (dry→sticky→watery→eggwhite) with reference hint — only if tracking. AC: gated + hint.
-- [ ] **6.3.5** Cervix position (F/M/S) — only if tracking. AC: gated.
-- [ ] **6.3.6** Date switcher to backfill past days. AC: can log yesterday.
-- [ ] **6.3.7** Save/edit states + toasts. AC: friendly feedback.
+- [x] **6.3.1** Bottom **drawer/sheet** for today: mood, energy, symptoms. AC: saves.
+- [x] **6.3.2** Flow control shown on bleeding days. AC: conditional render.
+- [x] **6.3.3** BBT (°F) + time taken + "unusual reading" toggle — only if trackingBBT. AC: gated correctly.
+- [x] **6.3.4** Mucus type picker (dry→sticky→watery→eggwhite) with reference hint — only if tracking. AC: gated + hint.
+- [x] **6.3.5** Cervix position (F/M/S) — only if tracking. AC: gated.
+- [x] **6.3.6** Date switcher to backfill past days. AC: can log yesterday.
+- [x] **6.3.7** Save/edit states + toasts. AC: friendly feedback.
 
 **Task 6 done when:** user logs today + past days; period start manages cycles; tracker fields gated to trackers.
 

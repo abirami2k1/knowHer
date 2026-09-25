@@ -62,3 +62,48 @@ export interface OnboardingRequest {
   /** 'YYYY-MM-DD' */
   today?: string;
 }
+
+// ── Daily logs ───────────────────────────────────────────────────────────
+
+export type Flow = 'none' | 'spotting' | 'light' | 'medium' | 'heavy';
+export type CervicalMucus = 'dry' | 'sticky' | 'watery' | 'eggwhite';
+export type CervixPosition = 'firm' | 'medium' | 'soft';
+
+/**
+ * One logged day. `date` is a plain calendar date (D1) and `bbtF` a plain number
+ * (°F, two decimals) — never a Decimal or a UTC instant.
+ */
+export interface DailyLogDto {
+  date: string;
+  flow: Flow | null;
+  bbtF: number | null;
+  /** Local time of day, "HH:mm". */
+  tempTakenAt: string | null;
+  isDisturbed: boolean;
+  disturbedReason: string | null;
+  cervicalMucus: CervicalMucus | null;
+  cervixPosition: CervixPosition | null;
+  mood: string | null;
+  energy: number | null;
+  symptoms: string[];
+}
+
+// ── Cycles ───────────────────────────────────────────────────────────────
+
+/**
+ * A cycle interval. `endDate` is null while it is the current one. The assessment
+ * fields are the snapshot written when it closed — null on a live cycle, whose
+ * assessment is computed on read (D4).
+ */
+export interface CycleDto {
+  id: string;
+  startDate: string;
+  endDate: string | null;
+  length: number | null;
+  coverlineF: number | null;
+  ovulationDay: number | null;
+  peakDay: number | null;
+  lutealLength: number | null;
+  isAnovulatory: boolean;
+  confidence: string | null;
+}
