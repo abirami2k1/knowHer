@@ -22,9 +22,9 @@ Last updated: 2026-09-24
 ---
 
 ## Currently working on
-- Task: **9.0.1** — `GET /history?month` (logged days only, no predictions). Tasks 7–8 are code-complete; a visual design pass ran on top of them.
-- Branch: `feature/cycle-tracker` (Tasks 7–8 committed; the design pass is uncommitted).
-- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open. Task 8's numbers are engine-plan defaults and are now user-visible.
+- Task: **10.0.1** — `GET /trends` (cycle length, luteal length, symptom and energy patterns).
+- Branch: `feature/history` (Task 9). Tasks 5–8 and the design system are merged and pushed; CI green on main at e9e9ff8.
+- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open. Task 10 is the first place `CycleSummary` is unioned with `Cycle`, so the dedupe rule in D4 matters there.
 
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
@@ -35,7 +35,7 @@ Last updated: 2026-09-24
 - [x] Task 6 — Daily Log + Period Tracker (founder browser click-through pending)
 - [x] Task 7 — Cycle Tracker UI (founder browser look pending)
 - [x] Task 8 — Dashboard (founder browser look pending)
-- [ ] Task 9 — Cycle History (calendar)
+- [x] Task 9 — Cycle History (calendar)
 - [ ] Task 10 — Trends
 - [ ] Task 11 — Knowledge Tab + Admin
 - [ ] Task 12 — Account & Privacy
@@ -158,12 +158,19 @@ Last updated: 2026-09-24
 - [x] 8.0.4 quick links into the daily log and the chart
 - [x] 8.0.5 honest fallback for long / irregular / no-cycle
 
-_(Add Task 9+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 9 — Cycle History (calendar)
+- [x] 9.0.1 GET /history?month — logged days only
+- [x] 9.0.2 month calendar, mobile-first, flow-weighted day cells
+- [x] 9.0.3 tap a day → read-only sheet + edit shortcut (/log?date=)
+- [x] 9.0.4 month navigation; no predicted days anywhere
+
+_(Add Task 10+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-09-24 — Task 9 done. `GET /history?month=YYYY-MM` returns logged days only — date, flow, whether a temperature exists, how many symptoms, and whether she marked a period start. No estimate, expected period or phase reaches it: a calendar is where a guess reads most like a fact, so the service simply never produces one (D4), and the Zod schema is `.strict()` so no other filter can be added by query either. Web: `lib/month.ts` (Monday-first grid, local calendar terms throughout), `MonthCalendar` (flow weight carries colour — spotting a tint, heavy a solid fill; a dot for a logged temperature, another for symptoms, a corner mark for a period start; future days dimmed; each cell carries a spoken label like "14 September: period started, medium flow, temperature logged"), `DayDetailSheet` (reuses the log's own DaySummary so a day reads identically wherever she meets it, with one way through to editing). The Log page now accepts `?date=` so the calendar can hand a specific day to the editor. Reached from a third Home shortcut. 145 api tests green; smoke-checked against the seeded account (September: 23 logged days, one cycle start; February: empty).
 - 2026-09-24 — **Visual design pass (founder: "UI is very basic"; direction chosen: warm editorial, whole app in one pass).** Foundations: Fraunces + Inter bundled via @fontsource (not the Google CDN, so an installed PWA looks like itself offline); tokens rebuilt in globals.css — paper/surface/sunken instead of flat white, ink/ink-soft/muted, a hairline `line` colour, display/title/eyebrow type scale, two soft shadows, and a `grain` utility so large warm fields do not read as plastic. **Cycle phases are now tokens** (menstrual/follicular/ovulatory/luteal/unknown, each an ink + a tint) applied through `web/src/lib/phase.ts`, so a phase looks the same wherever it appears — previously the app knew her phase and rendered it identically to every other day. New `ui/Card` (+ `Eyebrow`) replaces the repeated white-box-with-red-ring; Button and ChoiceList reworked (ChoiceList gained a `pills` layout for short labels); Sheet gained a grab handle and softer chrome; BottomNav gained the chart tab and an active mark rather than colour alone. Screens rebuilt: Home (phase-tinted hero, a CycleRibbon showing today against her typical length with ovulation solid when confirmed and hollow when estimated, shortcut cards), Log, Cycle, all seven onboarding steps, auth, Profile, Learn. Two display-only fields added to DashboardDto (`confirmedOvulationDay`, `cycleLengthTypical`) so the ribbon draws server-decided numbers rather than computing its own. PWA theme colour and the coding-standards token example updated to match. **Contrast was measured, not eyeballed:** the first palette failed WCAG AA for small text on `muted` (3.86), follicular (3.24) and ovulatory (2.54 on its own tint); those inks were darkened until the lowest pair in the system is 4.63. 142 api tests, both builds, both lints and repo prettier green.
 - 2026-09-24 — Task 8 done. `domain/cycle/estimate.ts` and `phase.ts` joined the engine per cycle-engine-plan §6.10–6.11 (they were deferred from Task 4 to here, where they are first used): `cycleStats` (mean + sample stdev + cv over closed lengths), `expectedOvulationDay` (`avg − defaultLutealAssumption`, floored at `minFollicularDays`; history once n ≥ minCyclesForEstimate, else the onboarding average labelled self_reported, else nothing), `isFallback` (irregular → long → none), `resolvePhase` (fallback → menstrual → confirmed luteal → estimated ovulatory/luteal → follicular) returning `basis: confirmed | estimated | none`, which is what stops an estimate from ever reading as a confirmation. 28 new engine tests, including config-flip tests proving a retuned luteal assumption or ovulatory window changes the answer. `services/dashboard.ts` assembles; `GET /dashboard` requires `today` (D1). Web: Home is now the dashboard — TodayCard (says "an estimate, not a confirmation" whenever basis is estimated, and shows the API's fallback words instead of a phase when it declines), ExpectedOvulation (labelled, never a fertile-window or safe-day signal, absent under any fallback), quick links to the log and the chart. **The smoke run caught a real judgement error:** the first draft returned `no_history` for a woman on day 2 of her first ever period, refusing to name a phase she was plainly in. `no_history` now means "no current cycle", not "no completed cycles" — she gets `menstrual/confirmed`, plus a self-reported estimate if she gave a cycle length at onboarding. Verified all six states against the local DB (no cycle · first cycle bleeding · first cycle with self-reported average · regular history follicular · regular history ovulatory · long · irregular). Task 1's API-health card left Home with this rewrite; `useHealth` and `lib/api/health.ts` are now unused but kept for Task 13's offline work.
 - 2026-09-24 — Task 7 done. `GET /cycles/:id/assessment` runs the engine over the logs the cycle's interval contains and returns `{ cycle, assessment, copy }`, where `copy` holds only the wording for the states this cycle actually reports — the UI never writes cycle words of its own. **Deviation from D4 worth knowing:** the stored snapshot has six summary fields and no chart rows, so this endpoint re-runs the engine for closed cycles too; the snapshot stays the cheap read for Trends. Web: recharts 3.10 added; `BbtChart` plots by cycle day with the Y domain padded (−0.2/+0.3 °F) so the shift is visible, coverline as a dashed ReferenceLine, ovulation and peak as ReferenceLines, luteal stretch as a ReferenceArea drawn only once ovulation is confirmed, and disturbed/excluded readings drawn hollow — plotted, visibly not counted. `MucusRow` is a plain flex row aligned by cycle day (Sivi's symbols, with a legend and screen-reader text per day). `CycleFacts` shows only confirmed values, and names the day ovulation was *confirmed* alongside the day it occurred. `CycleNotes` renders the flag and confidence copy verbatim. New /cycle route, linked from Home. Smoke-tested against a realistic 28-day ovulatory chart: ovulation day 14, confirmed day 17, peak day 14, confidence full.

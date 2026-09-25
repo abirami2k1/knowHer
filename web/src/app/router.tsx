@@ -4,6 +4,7 @@ import { RequireAuth } from '@/components/RequireAuth';
 import Login from '@/pages/auth/Login';
 import SignUp from '@/pages/auth/SignUp';
 import Cycle from '@/pages/Cycle';
+import History from '@/pages/History';
 import Home from '@/pages/Home';
 import Learn from '@/pages/Learn';
 import Log from '@/pages/Log';
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
           { index: true, element: <Home /> },
           { path: 'log', element: <Log /> },
           { path: 'cycle', element: <Cycle /> },
+          { path: 'history', element: <History /> },
           { path: 'learn', element: <Learn /> },
           { path: 'profile', element: <Profile /> },
         ],
