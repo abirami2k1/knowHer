@@ -45,6 +45,7 @@ describe('domain/cycle purity', () => {
       'luteal.ts',
       'series.ts',
       'coverline.ts',
+      'trends.ts',
     ]) {
       const code = withoutComments(readFileSync(join(DIR, name), 'utf8'));
       const sentences = stringLiterals(code).filter((text) => /\s/.test(text));

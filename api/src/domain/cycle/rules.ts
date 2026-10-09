@@ -46,6 +46,13 @@ export interface CycleRules {
   irregularCvThreshold: number;
   /** today > mean + k·stdev → fallback copy instead of a phase. */
   longCycleStdevMultiplier: number;
+
+  // ── Trends (Task 10) ───────────────────────────────────────────────────────
+  /** Recent cycles whose daily logs feed the energy and symptom patterns. Matches the
+   *  planned retention window, so these patterns read the same once old raw logs go. */
+  trendRecentCycles: number;
+  /** Below this many logged days in a phase, no average is shown for it. */
+  trendMinDaysPerPhase: number;
 }
 
 export const CYCLE_RULES: Readonly<CycleRules> = Object.freeze({
@@ -71,6 +78,9 @@ export const CYCLE_RULES: Readonly<CycleRules> = Object.freeze({
   ovulatoryWindowDays: 2,
   irregularCvThreshold: 0.18,
   longCycleStdevMultiplier: 2,
+
+  trendRecentCycles: 6,
+  trendMinDaysPerPhase: 3,
 } satisfies CycleRules);
 
 /** Convenience for tests and callers that tweak one rule. */

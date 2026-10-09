@@ -10,6 +10,7 @@ import Learn from '@/pages/Learn';
 import Log from '@/pages/Log';
 import Onboarding from '@/pages/onboarding/Onboarding';
 import Profile from '@/pages/Profile';
+import Trends from '@/pages/Trends';
 
 /**
  * All routes live here. Public: /login, /signup. Everything else sits behind
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
           { path: 'log', element: <Log /> },
           { path: 'cycle', element: <Cycle /> },
           { path: 'history', element: <History /> },
+          { path: 'trends', element: <Trends /> },
           { path: 'learn', element: <Learn /> },
           { path: 'profile', element: <Profile /> },
         ],

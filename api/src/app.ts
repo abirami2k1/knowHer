@@ -13,6 +13,7 @@ import { historyRouter } from './routes/history';
 import { logsRouter } from './routes/logs';
 import { meRouter } from './routes/me';
 import { onboardingRouter } from './routes/onboarding';
+import { trendsRouter } from './routes/trends';
 
 /**
  * Builds the Express app without binding a port, so tests can mount it
@@ -49,6 +50,7 @@ export function createApp() {
   app.use(assessmentRouter);
   app.use(dashboardRouter);
   app.use(historyRouter);
+  app.use(trendsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

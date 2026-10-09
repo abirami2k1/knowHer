@@ -211,3 +211,50 @@ export interface HistoryDayDto {
   symptomCount: number;
   isCycleStart: boolean;
 }
+
+// ── Trends ───────────────────────────────────────────────────────────────
+
+export type TrendPhase = Exclude<Phase, 'unknown'>;
+
+/** One closed cycle. `lutealLength` exists only when ovulation was confirmed. */
+export interface CycleTrendPoint {
+  startDate: string;
+  length: number;
+  lutealLength: number | null;
+  isAnovulatory: boolean;
+}
+
+/**
+ * GET /trends?today=YYYY-MM-DD.
+ *
+ * Lengths come from every closed cycle (Cycle rows, or CycleSummary once a cycle's
+ * raw logs are pruned). Energy and symptoms come from the recent cycles' daily logs.
+ * Every sentence in `notes` is from the API's copy map; the screen adds none.
+ */
+export interface TrendsDto {
+  /** Oldest first. */
+  cycles: CycleTrendPoint[];
+  lengths: { typical: number | null; shortest: number | null; longest: number | null };
+  energyByPhase: {
+    phase: TrendPhase;
+    /** Null when there are too few days to call it a pattern. */
+    average: number | null;
+    days: number;
+    estimatedDays: number;
+  }[];
+  symptoms: {
+    symptom: string;
+    days: number;
+    byPhase: Record<TrendPhase, number>;
+    mostOften: TrendPhase | null;
+  }[];
+  recent: { cycles: number; loggedDays: number; since: string | null };
+  notes: {
+    lengths: string;
+    luteal: string;
+    energy: string;
+    /** Present only when some days were placed by estimate. */
+    energyEstimated: string | null;
+    symptoms: string;
+  };
+}

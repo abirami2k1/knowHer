@@ -17,7 +17,7 @@ export interface PhaseResult {
 }
 
 /** The leading run of bleeding days from day 1. Spotting alone never counts (D3). */
-function menstrualThrough(logs: CycleLog[]): number {
+export function menstrualThrough(logs: CycleLog[]): number {
   const byDay = new Map(logs.map((log) => [log.cycleDay, log]));
   let day = 0;
   while (true) {

@@ -27,3 +27,12 @@ export function formatCalendarDate(value: string): string {
     year: 'numeric',
   });
 }
+
+/** Compact form for chart axes, e.g. "27 May". */
+export function formatShortDate(value: string): string {
+  const [year, month, day] = value.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+  });
+}

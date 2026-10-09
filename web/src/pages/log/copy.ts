@@ -39,7 +39,7 @@ const MOOD_LABELS: Record<string, string> = {
   foggy: 'Foggy',
 };
 
-const SYMPTOM_LABELS: Record<string, string> = {
+export const SYMPTOM_LABELS: Record<string, string> = {
   cramps: 'Cramps',
   headache: 'Headache',
   backache: 'Backache',

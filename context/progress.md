@@ -5,7 +5,7 @@ The detailed items live in `@tasks/TASKLIST.md`; this file is the at-a-glance tr
 
 Status keys: `[ ]` not started · `[~]` in progress · `[x]` done
 
-Last updated: 2026-09-24
+Last updated: 2026-10-09
 
 ---
 
@@ -22,9 +22,9 @@ Last updated: 2026-09-24
 ---
 
 ## Currently working on
-- Task: **10.0.1** — `GET /trends` (cycle length, luteal length, symptom and energy patterns).
-- Branch: `feature/history` (Task 9). Tasks 5–8 and the design system are merged and pushed; CI green on main at e9e9ff8.
-- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open. Task 10 is the first place `CycleSummary` is unioned with `Cycle`, so the dedupe rule in D4 matters there.
+- Task: **11.0.1** — `GET /knowledge`, `GET /blog`, `GET /blog/:slug` (+ audience filter).
+- Branch: `feature/trends` (Task 10, awaiting commit approval). Task 9 is merged to main at c6a410e.
+- Notes: 4.4.0 (Sivi gate) and 1.2.7 (Sentry DSNs) remain open. 11.0.6 (S3 keep/drop) is the next founder decision on the path.
 
 ## Phase status (high level)
 - [x] Task 1 — Scaffolding & app shell (1.2.7 Sentry deferred to founder checkpoint)
@@ -36,7 +36,7 @@ Last updated: 2026-09-24
 - [x] Task 7 — Cycle Tracker UI (founder browser look pending)
 - [x] Task 8 — Dashboard (founder browser look pending)
 - [x] Task 9 — Cycle History (calendar)
-- [ ] Task 10 — Trends
+- [x] Task 10 — Trends (founder browser look pending)
 - [ ] Task 11 — Knowledge Tab + Admin
 - [ ] Task 12 — Account & Privacy
 - [ ] Task 13 — PWA polish & daily nudge
@@ -164,12 +164,20 @@ Last updated: 2026-09-24
 - [x] 9.0.3 tap a day → read-only sheet + edit shortcut (/log?date=)
 - [x] 9.0.4 month navigation; no predicted days anywhere
 
-_(Add Task 10+ items here as you reach them — pull them from TASKLIST.md.)_
+### Task 10 — Trends
+- [x] 10.0.1 GET /trends?today= — closed-cycle lengths + luteal (Cycle ∪ CycleSummary, deduped), energy by phase, symptom patterns
+- [x] 10.0.2 cycle length trend chart (typical line, range)
+- [x] 10.0.3 luteal length trend (confirmed cycles only)
+- [x] 10.0.4 symptom pattern view
+- [x] 10.0.5 energy-by-phase view, energy words not scores
+
+_(Add Task 11+ items here as you reach them — pull them from TASKLIST.md.)_
 
 ---
 
 ## Change log
 > One line per completed item or notable decision. Newest at top.
+- 2026-10-09 — Task 10 done. **Engine:** `domain/cycle/trends.ts` (pure, in the purity + inline-prose guards). `dayPlacer` places a past day in a phase only when there is something to place it by: a confirmed shift → `confirmed`; a closed cycle with no shift → counted back from its known end (`length − defaultLutealAssumption`, floored) → `estimated`; an anovulatory cycle or an unconfirmed live one → bleeding days only, the rest unplaced (nothing forecast, and no luteal days invented for a cycle with no ovulation). Phase boundaries mirror the dashboard's. `energyByPhase` withholds an average below `trendMinDaysPerPhase` (3) days; `symptomPatterns` names the phase a symptom turns up in *relative to days logged in that phase* (follicular days are simply more numerous), and declines on ties or rare symptoms. `mergeCycleHistory` is the D4 precedence rule: Cycle row wins, CycleSummary only stands in for a pruned cycle, deduped on start date. New rules keys `trendRecentCycles` (6, matching the planned retention window, so energy/symptom patterns read the same once retention ships) and `trendMinDaysPerPhase`; new `trends.*` copy keys (describe, never grade — no "short luteal phase" judgement). 14 new engine tests incl. config flips. **API:** `services/trends.ts` (`completedCycles` + `buildTrends`; closed cycles use the stored snapshot, the live one runs the engine as of her today), `GET /trends?today=` (strict Zod). The dashboard now counts her history through `completedCycles` too, closing the "Task 10 unions CycleSummary here" note in services/dashboard.ts. Smoke-tested on the local DB: 3 closed cycles + 1 live, 117 logs; anovulatory and live cycles leave non-bleeding days unplaced; with a temporary conflicting summary (99 days) the Cycle row's 34 won and an older pruned cycle appeared from its summary, then both rows were removed. **Web:** /trends page (Home shortcut), `TrendLine` (one Recharts line per measure, typical as a dashed reference, tooltip, screen-reader list), `EnergyByPhase` (bars named by phase on the axis + a list in her own energy words — "Steady", not "2.8/5"), `SymptomPatterns` (top 6, relative bar, "most often in your luteal days" chip). **Palette finding:** the dataviz validator fails the phase inks as a categorical set (follicular and luteal low-chroma; ovulatory↔follicular ΔE 14.9, just under the 15 normal-vision floor). Not retuned here — they are brand tokens already tuned for text contrast — so every Trends chart names phases in text and colour never carries identity alone. Worth revisiting in 13.0.6. Known: `CycleSummary` has no `isAnovulatory` column; summaries are reported as not-anovulatory — a decision for the retention design.
 - 2026-09-24 — Task 9 done. `GET /history?month=YYYY-MM` returns logged days only — date, flow, whether a temperature exists, how many symptoms, and whether she marked a period start. No estimate, expected period or phase reaches it: a calendar is where a guess reads most like a fact, so the service simply never produces one (D4), and the Zod schema is `.strict()` so no other filter can be added by query either. Web: `lib/month.ts` (Monday-first grid, local calendar terms throughout), `MonthCalendar` (flow weight carries colour — spotting a tint, heavy a solid fill; a dot for a logged temperature, another for symptoms, a corner mark for a period start; future days dimmed; each cell carries a spoken label like "14 September: period started, medium flow, temperature logged"), `DayDetailSheet` (reuses the log's own DaySummary so a day reads identically wherever she meets it, with one way through to editing). The Log page now accepts `?date=` so the calendar can hand a specific day to the editor. Reached from a third Home shortcut. 145 api tests green; smoke-checked against the seeded account (September: 23 logged days, one cycle start; February: empty).
 - 2026-09-24 — **Visual design pass (founder: "UI is very basic"; direction chosen: warm editorial, whole app in one pass).** Foundations: Fraunces + Inter bundled via @fontsource (not the Google CDN, so an installed PWA looks like itself offline); tokens rebuilt in globals.css — paper/surface/sunken instead of flat white, ink/ink-soft/muted, a hairline `line` colour, display/title/eyebrow type scale, two soft shadows, and a `grain` utility so large warm fields do not read as plastic. **Cycle phases are now tokens** (menstrual/follicular/ovulatory/luteal/unknown, each an ink + a tint) applied through `web/src/lib/phase.ts`, so a phase looks the same wherever it appears — previously the app knew her phase and rendered it identically to every other day. New `ui/Card` (+ `Eyebrow`) replaces the repeated white-box-with-red-ring; Button and ChoiceList reworked (ChoiceList gained a `pills` layout for short labels); Sheet gained a grab handle and softer chrome; BottomNav gained the chart tab and an active mark rather than colour alone. Screens rebuilt: Home (phase-tinted hero, a CycleRibbon showing today against her typical length with ovulation solid when confirmed and hollow when estimated, shortcut cards), Log, Cycle, all seven onboarding steps, auth, Profile, Learn. Two display-only fields added to DashboardDto (`confirmedOvulationDay`, `cycleLengthTypical`) so the ribbon draws server-decided numbers rather than computing its own. PWA theme colour and the coding-standards token example updated to match. **Contrast was measured, not eyeballed:** the first palette failed WCAG AA for small text on `muted` (3.86), follicular (3.24) and ovulatory (2.54 on its own tint); those inks were darkened until the lowest pair in the system is 4.63. 142 api tests, both builds, both lints and repo prettier green.
 - 2026-09-24 — Task 8 done. `domain/cycle/estimate.ts` and `phase.ts` joined the engine per cycle-engine-plan §6.10–6.11 (they were deferred from Task 4 to here, where they are first used): `cycleStats` (mean + sample stdev + cv over closed lengths), `expectedOvulationDay` (`avg − defaultLutealAssumption`, floored at `minFollicularDays`; history once n ≥ minCyclesForEstimate, else the onboarding average labelled self_reported, else nothing), `isFallback` (irregular → long → none), `resolvePhase` (fallback → menstrual → confirmed luteal → estimated ovulatory/luteal → follicular) returning `basis: confirmed | estimated | none`, which is what stops an estimate from ever reading as a confirmation. 28 new engine tests, including config-flip tests proving a retuned luteal assumption or ovulatory window changes the answer. `services/dashboard.ts` assembles; `GET /dashboard` requires `today` (D1). Web: Home is now the dashboard — TodayCard (says "an estimate, not a confirmation" whenever basis is estimated, and shows the API's fallback words instead of a phase when it declines), ExpectedOvulation (labelled, never a fertile-window or safe-day signal, absent under any fallback), quick links to the log and the chart. **The smoke run caught a real judgement error:** the first draft returned `no_history` for a woman on day 2 of her first ever period, refusing to name a phase she was plainly in. `no_history` now means "no current cycle", not "no completed cycles" — she gets `menstrual/confirmed`, plus a self-reported estimate if she gave a cycle length at onboarding. Verified all six states against the local DB (no cycle · first cycle bleeding · first cycle with self-reported average · regular history follicular · regular history ovulatory · long · irregular). Task 1's API-health card left Home with this rewrite; `useHealth` and `lib/api/health.ts` are now unused but kept for Task 13's offline work.
