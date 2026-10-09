@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import { Card, Eyebrow } from '@/components/ui/Card';
@@ -54,6 +54,15 @@ export default function Profile() {
           ))}
         </dl>
       </Card>
+
+      {me.data?.role === 'author' && (
+        <Link
+          to="/admin"
+          className="flex min-h-12 items-center justify-center rounded-pill bg-surface px-5 font-medium text-primary ring-1 ring-line hover:bg-surface-sunken"
+        >
+          Write and publish posts
+        </Link>
+      )}
 
       <Card tone="quiet" className="p-4">
         <p className="text-sm leading-relaxed text-ink-soft">

@@ -2,7 +2,7 @@
   "name": "knowher-api",
   "private": true,
   "version": "0.0.0",
-  "description": "knowHer API — Node + Express + TypeScript. All business logic and cycle math live here.",
+  "description": "knowHer API \u2014 Node + Express + TypeScript. All business logic and cycle math live here.",
   "main": "dist/api/src/index.js",
   "engines": {
     "node": ">=24"
@@ -17,7 +17,8 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "migrate:status": "prisma migrate status",
-    "seed": "prisma db seed"
+    "seed": "prisma db seed",
+    "set-role": "tsx prisma/set-role.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
