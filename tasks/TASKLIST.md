@@ -230,11 +230,11 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Task 11 — KNOWLEDGE TAB + ADMIN
 
-- [ ] **11.0.1** `[api]` `GET /knowledge`, `GET /blog`, `GET /blog/:slug` (+ audience filter). AC: return content.
-- [ ] **11.0.2** `[web]` Learn tab: sections Basics · From Sivi · For Supporters; markdown render; mobile reading view. AC: browsable.
-- [ ] **11.0.3** `[api]` Author role + role check; BlogPost create/edit/publish/draft endpoints. AC: non-author blocked.
-- [ ] **11.0.4** `[web]` Admin panel (role-gated) with markdown editor + publish/unpublish. AC: author publishes a post.
-- [ ] **11.0.5** Verify published post appears publicly; drafts don't. AC: visibility correct.
+- [x] **11.0.1** `[api]` `GET /knowledge`, `GET /blog`, `GET /blog/:slug` (+ audience filter). AC: return content.
+- [x] **11.0.2** `[web]` Learn tab: sections Basics · From Sivi · For Supporters; markdown render; mobile reading view. AC: browsable.
+- [x] **11.0.3** `[api]` Author role + role check; BlogPost create/edit/publish/draft endpoints. AC: non-author blocked.
+- [x] **11.0.4** `[web]` Admin panel (role-gated) with markdown editor + publish/unpublish. AC: author publishes a post.
+- [x] **11.0.5** Verify published post appears publicly; drafts don't. AC: visibility correct.
 - [ ] **11.0.6** Decide S3's role: add blog/knowledge image upload (presigned URLs) here, or drop S3 from the stack entirely. AC: decision recorded; if kept, an image renders in a published post.
 
 **Task 11 done when:** readers browse by section; an author publishes a live post; non-authors can't access admin.

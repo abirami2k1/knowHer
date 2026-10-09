@@ -258,3 +258,52 @@ export interface TrendsDto {
     symptoms: string;
   };
 }
+
+// ── Knowledge & blog ─────────────────────────────────────────────────────
+
+/** Who a post is written for. 'both' appears in both the reader and supporter sections. */
+export type Audience = 'user' | 'supporter' | 'both';
+export type KnowledgeCategory = 'basics' | 'cycle' | 'supporters';
+
+/** GET /knowledge. Articles are short, so the list carries their bodies. */
+export interface KnowledgeArticleDto {
+  slug: string;
+  title: string;
+  category: KnowledgeCategory;
+  bodyMarkdown: string;
+}
+
+/** GET /blog — published posts only. */
+export interface BlogPostSummary {
+  slug: string;
+  title: string;
+  audience: Audience;
+  /** ISO instant of first publication. */
+  publishedAt: string;
+  authorName: string | null;
+}
+
+/** GET /blog/:slug. */
+export interface BlogPostDto extends BlogPostSummary {
+  bodyMarkdown: string;
+}
+
+/** What an author sends to create or edit a post. */
+export interface BlogPostInput {
+  title: string;
+  bodyMarkdown: string;
+  audience: Audience;
+}
+
+/** Author-only view, drafts included (GET /admin/posts and every write). */
+export interface AdminPostDto {
+  id: string;
+  slug: string;
+  title: string;
+  audience: Audience;
+  bodyMarkdown: string;
+  isPublished: boolean;
+  publishedAt: string | null;
+  updatedAt: string;
+  authorName: string | null;
+}

@@ -92,6 +92,19 @@ Paste the two IDs and the region into both env files:
 
 Pool and client IDs are public identifiers, not secrets, but they still live in env files so dev and prod pools never mix. The API never holds AWS credentials for auth: it verifies tokens against the pool's public JWKS.
 
+## Authors (who can publish to the Learn tab)
+
+Roles live in the database (`User.role`), not in Cognito groups. To let someone write and publish posts, they sign up and finish onboarding once, then:
+
+```bash
+cd api
+npm run set-role -- --list                 # find their Cognito sub (also shown in the Cognito console as "User ID (sub)")
+npm run set-role -- <cognitoSub> author    # grant
+npm run set-role -- <cognitoSub> user      # revoke
+```
+
+They will see **Write and publish posts** on their Profile. The API checks the role on every author route; hiding the link is only a courtesy.
+
 ## Local database
 
 ```bash

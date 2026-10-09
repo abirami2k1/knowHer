@@ -6,10 +6,12 @@ import { CONFIG } from './config';
 import { fail } from './lib/respond';
 import { errorHandler, notFoundHandler } from './middleware/error-handler';
 import { assessmentRouter } from './routes/assessment';
+import { blogRouter } from './routes/blog';
 import { cyclesRouter } from './routes/cycles';
 import { dashboardRouter } from './routes/dashboard';
 import { healthRouter } from './routes/health';
 import { historyRouter } from './routes/history';
+import { knowledgeRouter } from './routes/knowledge';
 import { logsRouter } from './routes/logs';
 import { meRouter } from './routes/me';
 import { onboardingRouter } from './routes/onboarding';
@@ -51,6 +53,8 @@ export function createApp() {
   app.use(dashboardRouter);
   app.use(historyRouter);
   app.use(trendsRouter);
+  app.use(knowledgeRouter);
+  app.use(blogRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
