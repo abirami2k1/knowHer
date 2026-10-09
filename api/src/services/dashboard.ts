@@ -9,8 +9,8 @@ import {
 } from '../domain/cycle';
 import type { User } from '../generated/prisma/client';
 import { addDays, daysBetween, toIsoDate, type CalendarDate } from '../lib/dates';
-import { prisma } from '../lib/prisma';
 import { assess, cycleCovering, logsForCycle, toEngineInput } from './cycles';
+import { completedCycles } from './trends';
 
 /**
  * Today, assembled. Every number comes from the engine; this only fetches rows
@@ -22,13 +22,10 @@ import { assess, cycleCovering, logsForCycle, toEngineInput } from './cycles';
 export async function buildDashboard(user: User, today: CalendarDate): Promise<DashboardDto> {
   const cycle = await cycleCovering(user.id, today);
 
-  // Closed cycles only: a running cycle has no length to average.
-  // (Task 10 unions CycleSummary here, for cycles whose raw logs were pruned.)
-  const closed = await prisma.cycle.findMany({
-    where: { userId: user.id, length: { not: null } },
-    select: { length: true },
-  });
-  const stats = cycleStats(closed.map((c) => c.length as number));
+  // Closed cycles only: a running cycle has no length to average. Counted the
+  // same way Trends counts them, summaries of pruned cycles included (D4).
+  const closed = await completedCycles(user.id);
+  const stats = cycleStats(closed.map((c) => c.length));
   const expected = expectedOvulationDay({ stats, selfReportedAvg: user.avgCycleLength });
 
   // Her typical length, for the UI to draw against. Own history first, then what

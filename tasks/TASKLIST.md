@@ -218,11 +218,11 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Task 10 — TRENDS
 
-- [ ] **10.0.1** `[api]` `GET /trends` from `CycleSummary` (+ recent logs): cycle length, luteal length, symptom freq, energy by phase. AC: returns series.
-- [ ] **10.0.2** `[web]` Cycle length trend chart. AC: renders.
-- [ ] **10.0.3** `[web]` Luteal length trend. AC: renders.
-- [ ] **10.0.4** `[web]` Symptom pattern view. AC: renders.
-- [ ] **10.0.5** `[web]` Energy-by-phase view; warm framing. AC: renders, non-clinical tone.
+- [x] **10.0.1** `[api]` `GET /trends` from `CycleSummary` (+ recent logs): cycle length, luteal length, symptom freq, energy by phase. AC: returns series.
+- [x] **10.0.2** `[web]` Cycle length trend chart. AC: renders.
+- [x] **10.0.3** `[web]` Luteal length trend. AC: renders.
+- [x] **10.0.4** `[web]` Symptom pattern view. AC: renders.
+- [x] **10.0.5** `[web]` Energy-by-phase view; warm framing. AC: renders, non-clinical tone.
 
 **Task 10 done when:** trends render from summaries+recent logs and survive raw-log deletion in principle.
 

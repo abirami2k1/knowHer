@@ -10,7 +10,22 @@ export type CopyKey =
   | `confidence.${Confidence}`
   | `phase.${Phase}`
   | `insight.${Phase}`
-  | `fallback.${FallbackReason}`;
+  | `fallback.${FallbackReason}`
+  | `trends.${TrendNote}`;
+
+/** The states the Trends screen can be in, each with its own honest sentence. */
+export type TrendNote =
+  | 'lengths.none'
+  | 'lengths.few'
+  | 'lengths.steady'
+  | 'lengths.varied'
+  | 'luteal.none'
+  | 'luteal.about'
+  | 'energy.none'
+  | 'energy.about'
+  | 'energy.estimated'
+  | 'symptoms.none'
+  | 'symptoms.about';
 
 export const CYCLE_COPY: Readonly<Record<CopyKey, string>> = Object.freeze({
   // ── Flags ──────────────────────────────────────────────────────────────────
@@ -65,4 +80,28 @@ export const CYCLE_COPY: Readonly<Record<CopyKey, string>> = Object.freeze({
   'fallback.irregular':
     "Your cycles vary quite a bit, so we won't guess a phase. What you log is what we go by.",
   'fallback.no_history': "Log your next period start and we'll begin charting from there.",
+
+  // ── Trends (Task 10) ───────────────────────────────────────────────────────
+  // Patterns, never scores. Nothing here grades a cycle as good or bad, and a
+  // short or varied cycle is described, not flagged.
+  'trends.lengths.none':
+    'Your cycle lengths will show here once a cycle closes — that happens when you log your next period start.',
+  'trends.lengths.few':
+    'One cycle so far. A pattern needs a few more; keep logging and it will take shape.',
+  'trends.lengths.steady': 'Your cycles have kept to a fairly steady length.',
+  'trends.lengths.varied':
+    "Your cycle lengths vary quite a bit. That's common, and it's why we go by what you log rather than a 28-day model.",
+  'trends.luteal.none':
+    'Luteal length appears once a cycle closes with a confirmed temperature shift. Cycles without one are simply left out.',
+  'trends.luteal.about':
+    'The days from a confirmed ovulation to your next period. Only cycles with a confirmed temperature shift are counted.',
+  'trends.energy.none':
+    'Log your energy on a few days in each phase and your pattern will start to show here.',
+  'trends.energy.about':
+    'How your energy has tended to run through each phase. A tendency, not a rule — any day can be different.',
+  'trends.energy.estimated':
+    'Where a cycle had no confirmed temperature shift, its days were placed by counting back from the next period, so read those phases as approximate.',
+  'trends.symptoms.none': 'No symptoms noted in your recent cycles.',
+  'trends.symptoms.about':
+    "What you've noted most across your recent cycles, and the phase each tends to turn up in.",
 });

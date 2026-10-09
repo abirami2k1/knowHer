@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, LineChart, PenLine } from 'lucide-react';
+import { ArrowRight, CalendarDays, LineChart, PenLine, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ExpectedOvulation } from '@/components/home/ExpectedOvulation';
 import { TodayCard } from '@/components/home/TodayCard';
@@ -25,6 +25,12 @@ const SHORTCUTS = [
     icon: CalendarDays,
     title: 'Your history',
     body: 'A calendar of the days you logged. Only what happened — nothing forecast.',
+  },
+  {
+    to: '/trends',
+    icon: TrendingUp,
+    title: 'Your patterns',
+    body: 'Cycle length, energy and symptoms over time — what your own cycles have shown.',
   },
 ];
 
