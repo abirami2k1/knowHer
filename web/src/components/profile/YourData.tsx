@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, Eyebrow } from '@/components/ui/Card';
 import { getAccountExport } from '@/lib/api/account';
 import { todayIsoDate } from '@/lib/dates';
+import { friendlyError } from '@/lib/errors';
 
 /** Hands the export to the browser as a file — it never sits in a URL or a cache. */
 function saveAsFile(data: unknown) {
@@ -27,8 +28,7 @@ export function YourData({ onDeleted }: { onDeleted: () => void }) {
       saveAsFile(data);
       toast.success('Your data is downloading');
     },
-    onError: () =>
-      toast.error("Couldn't prepare your export. Check your connection and try again."),
+    onError: (error: unknown) => toast.error(friendlyError(error)),
   });
 
   return (

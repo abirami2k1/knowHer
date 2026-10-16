@@ -1,11 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { DailyNudge } from '@/components/profile/DailyNudge';
 import { YourData } from '@/components/profile/YourData';
 import { Button } from '@/components/ui/Button';
 import { Card, Eyebrow } from '@/components/ui/Card';
 import { useAuth } from '@/hooks/useAuth';
 import { useMe } from '@/hooks/useMe';
+import { clearOfflineData } from '@/lib/offline';
 
 export default function Profile() {
   const { email, signOut } = useAuth();
@@ -16,6 +18,10 @@ export default function Profile() {
   function leave(message: string) {
     signOut();
     queryClient.clear(); // nothing of this user's stays in memory for the next one
+    // Nor on the device: unsent days and the cached dashboard are health data,
+    // and a phone gets shared. Any unsynced day is lost — which is why the
+    // offline banner says one is waiting before she gets here.
+    void clearOfflineData();
     toast(message);
     navigate('/login', { replace: true });
   }
@@ -66,6 +72,8 @@ export default function Profile() {
           Write and publish posts
         </Link>
       )}
+
+      <DailyNudge />
 
       <YourData onDeleted={onDeleted} />
 

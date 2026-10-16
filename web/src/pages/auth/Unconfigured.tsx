@@ -5,7 +5,7 @@ export function Unconfigured() {
   return (
     <Card as="div" className="p-5">
       <div role="alert">
-        <h2 className="font-display text-title text-ink">Sign-in isn’t set up yet</h2>
+        <h1 className="font-display text-title text-ink">Sign-in isn’t set up yet</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
           This build has no Cognito user pool configured. Set the <code>VITE_COGNITO_*</code> values
           in <code>web/.env.local</code> (see the README) and restart the dev server.

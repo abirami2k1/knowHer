@@ -1,5 +1,6 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, type ReactNode } from 'react';
+import { useMotion } from '@/lib/motion';
 
 interface SheetProps {
   open: boolean;
@@ -17,7 +18,7 @@ interface SheetProps {
  */
 export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
+  const { fade, fromBottom } = useMotion();
 
   useEffect(() => {
     if (!open) return;
@@ -41,10 +42,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
         <div className="fixed inset-0 z-50">
           <motion.div
             className="absolute inset-0 bg-ink/35 backdrop-blur-[2px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+            {...fade}
             onClick={onClose}
             aria-hidden
           />
@@ -55,10 +53,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
             aria-label={title}
             tabIndex={-1}
             className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[90dvh] w-full max-w-md flex-col rounded-t-[2rem] bg-paper shadow-[var(--shadow-lift)] outline-none"
-            initial={{ y: reduceMotion ? 0 : '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: reduceMotion ? 0 : '100%' }}
-            transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+            {...fromBottom}
           >
             {/* Grab handle: signals "this pulls down" before anyone reads a word. */}
             <div aria-hidden className="mx-auto mt-3 h-1 w-10 rounded-pill bg-line" />

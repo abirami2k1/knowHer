@@ -1,25 +1,42 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
+import { useMotion } from '@/lib/motion';
 
 /**
- * A subtle fade + lift between routes — warm, never bouncy.
- * With prefers-reduced-motion the swap is instant.
+ * A subtle fade + lift between routes — warm, never bouncy. The timing is the
+ * app's shared `rise`, already resolved against prefers-reduced-motion.
  * useOutlet() (not <Outlet/>) so the exiting page keeps rendering its own content.
+ *
+ * It also moves focus to the new page, which a single-page app has to do by
+ * hand. Without it, a keyboard or screen-reader user taps a nav item and stays
+ * exactly where they were, at the bottom of a page that is now gone. (The page
+ * title is set by TitleSync, which wraps the routes outside the shell too.)
  */
 export function PageTransition() {
   const location = useLocation();
   const outlet = useOutlet();
-  const reduceMotion = useReducedMotion();
-  const lift = reduceMotion ? 0 : 8;
+  const { rise } = useMotion();
+  const regionRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // Not on first load: focus belongs wherever the browser put it until she moves.
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    regionRef.current?.focus();
+  }, [location.pathname]);
 
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: lift }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -lift }}
-        transition={{ duration: reduceMotion ? 0 : 0.2, ease: 'easeOut' }}
+        ref={regionRef}
+        tabIndex={-1}
+        className="outline-none"
+        {...rise()}
       >
         {outlet}
       </motion.div>

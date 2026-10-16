@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { PostEditor } from '@/components/admin/PostEditor';
 import { useAdminPosts, useSavePost, useSetPublished } from '@/hooks/useContent';
+import { friendlyError } from '@/lib/errors';
 
 /** /admin/new and /admin/:id. Loads the post, then hands it to the editor. */
 export default function EditPost() {
@@ -17,8 +18,7 @@ export default function EditPost() {
   const post = isNew ? null : posts.data?.find((p) => p.id === id);
   if (!isNew && !post) return <Navigate to="/admin" replace />;
 
-  const onError = (error: Error) =>
-    toast.error(error.message || 'Something went wrong. Try again.');
+  const onError = (error: Error) => toast.error(friendlyError(error));
 
   return (
     <PostEditor

@@ -5,6 +5,7 @@ import { cognitoAdmin, type IdentityAdmin } from '../lib/identity-admin';
 import { toIsoDate } from '../lib/dates';
 import { prisma } from '../lib/prisma';
 import { listPostsByAuthor } from './content';
+import { listPushSubscriptions } from './push';
 import { toCycleDto } from './cycles';
 import { toDailyLogDto } from './logs';
 import { toProfile } from './users';
@@ -12,12 +13,13 @@ import { toProfile } from './users';
 // ── Export ───────────────────────────────────────────────────────────────────
 
 const EXPORT_NOTE =
-  'This file holds everything knowHer stores about you: your profile, every cycle, every daily log ' +
-  'and any cycle summaries. Your raw daily logs are all here — nothing has been pruned. ' +
+  'This file holds everything knowHer stores about you: your profile, every cycle, every daily log, ' +
+  'any cycle summaries, and any browsers you have turned the daily nudge on for. ' +
+  'Your raw daily logs are all here — nothing has been pruned. ' +
   'It does not include your password or sign-in details, which live with our sign-in provider and are never visible to us.';
 
 export async function exportAccount(user: User, now: Date = new Date()): Promise<AccountExport> {
-  const [cycles, logs, summaries, posts] = await Promise.all([
+  const [cycles, logs, summaries, posts, pushDevices] = await Promise.all([
     prisma.cycle.findMany({ where: { userId: user.id }, orderBy: { startDate: 'asc' } }),
     prisma.dailyLog.findMany({ where: { userId: user.id }, orderBy: { date: 'asc' } }),
     prisma.cycleSummary.findMany({
@@ -25,6 +27,7 @@ export async function exportAccount(user: User, now: Date = new Date()): Promise
       orderBy: { cycleStartDate: 'asc' },
     }),
     user.role === 'author' ? listPostsByAuthor(user.id) : Promise.resolve([]),
+    listPushSubscriptions(user.id),
   ]);
 
   return {
@@ -45,6 +48,7 @@ export async function exportAccount(user: User, now: Date = new Date()): Promise
       notes: s.notes,
     })),
     blogPosts: posts,
+    pushDevices,
   };
 }
 

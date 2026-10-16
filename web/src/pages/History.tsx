@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { DayDetailSheet } from '@/components/history/DayDetailSheet';
 import { MonthCalendar } from '@/components/history/MonthCalendar';
@@ -6,6 +6,7 @@ import { Card, Eyebrow } from '@/components/ui/Card';
 import { useHistory } from '@/hooks/useHistory';
 import { todayIsoDate } from '@/lib/dates';
 import { monthLabel, monthOf, shiftMonth } from '@/lib/month';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const NAV_BUTTON =
   'flex size-11 shrink-0 items-center justify-center rounded-pill bg-surface text-ink ring-1 ring-line transition-colors hover:bg-surface-sunken disabled:opacity-35';
@@ -70,12 +71,11 @@ export default function History() {
       </Card>
 
       {history.data?.length === 0 && !history.isPending && (
-        <Card tone="quiet" className="p-5">
-          <p className="text-[15px] leading-relaxed text-ink-soft">
-            Nothing logged in {monthLabel(month)}. Days you fill in will show up here — only what
-            you actually recorded, never a guess about what is coming.
-          </p>
-        </Card>
+        <EmptyState
+          icon={CalendarDays}
+          title={`Nothing logged in ${monthLabel(month)}`}
+          body="Days you fill in will show up here — only what you actually recorded, never a guess about what is coming."
+        />
       )}
 
       <Card tone="quiet" className="p-4">

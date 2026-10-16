@@ -8,11 +8,13 @@ import { PeriodStartPrompt } from '@/components/log/PeriodStartPrompt';
 import { Button } from '@/components/ui/Button';
 import { Card, Eyebrow } from '@/components/ui/Card';
 import { Sheet } from '@/components/ui/Sheet';
+import { Loading, SkeletonCard } from '@/components/ui/Skeleton';
 import { cycleCovers, useCycles, useStartCycle } from '@/hooks/useCycles';
 import { toBody, useLogDraft } from '@/hooks/useLogDraft';
 import { useDayLog, useSaveLog } from '@/hooks/useLogs';
 import { useMe } from '@/hooks/useMe';
 import { formatCalendarDate, todayIsoDate } from '@/lib/dates';
+import { friendlyError } from '@/lib/errors';
 import { PERIOD_FLOWS } from '@/pages/log/copy';
 
 export default function Log() {
@@ -34,15 +36,25 @@ export default function Log() {
 
   async function onSave() {
     try {
-      const saved = await save.mutateAsync(toBody(draft, date, todayIsoDate()));
+      const outcome = await save.mutateAsync(toBody(draft, date, todayIsoDate()));
       setSheetOpen(false);
+
+      if (outcome.queued) {
+        // Held on the device until there is a connection. Starting a cycle is a
+        // boundary the server owns, so the period-start question waits too —
+        // she is asked next time she opens this day online.
+        toast.success("Saved on this device. It'll sync when you're back online.");
+        return;
+      }
+
       toast.success('Saved.');
       // Bleeding beyond spotting on a day no cycle covers → ask, never assume (D3).
-      if (saved.flow && PERIOD_FLOWS.includes(saved.flow) && !cycleCovers(cycles.data, date)) {
+      const { flow } = outcome.log;
+      if (flow && PERIOD_FLOWS.includes(flow) && !cycleCovers(cycles.data, date)) {
         setPromptOpen(true);
       }
     } catch (error) {
-      toast.error((error as Error).message);
+      toast.error(friendlyError(error));
     }
   }
 
@@ -52,7 +64,7 @@ export default function Log() {
       setPromptOpen(false);
       toast.success('New cycle started.');
     } catch (error) {
-      toast.error((error as Error).message);
+      toast.error(friendlyError(error));
     }
   }
 
@@ -71,9 +83,9 @@ export default function Log() {
       <DateSwitcher date={date} onChange={setDate} />
 
       {day.isPending ? (
-        <Card tone="quiet" className="p-5">
-          <p className="text-muted">Loading…</p>
-        </Card>
+        <Loading label="Opening this day">
+          <SkeletonCard lines={2} />
+        </Loading>
       ) : day.isError ? (
         <Card className="p-5">
           <p role="alert" className="text-primary">

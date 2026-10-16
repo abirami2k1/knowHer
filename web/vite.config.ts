@@ -32,9 +32,15 @@ export default defineConfig({
           },
         ],
       },
+      // The nudge lives in the service worker, so it has to run on localhost too —
+      // without this the toggle in Profile has nothing to subscribe against in dev.
+      devOptions: { enabled: true, type: 'module' },
       workbox: {
-        // App shell precache only. Offline log queue + last-fetched dashboard arrive in Task 13.
+        // App shell precache only. Offline log queue + last-fetched dashboard arrive in 13.0.3.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Our half of the service worker: receiving the daily nudge and opening
+        // the log when she taps it. Workbox writes the rest of sw.js.
+        importScripts: ['push-sw.js'],
       },
     }),
   ],

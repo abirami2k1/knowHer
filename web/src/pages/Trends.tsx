@@ -4,6 +4,7 @@ import { SymptomPatterns } from '@/components/trends/SymptomPatterns';
 import { TrendLine } from '@/components/trends/TrendLine';
 import { TrendSection } from '@/components/trends/TrendSection';
 import { Card, Eyebrow } from '@/components/ui/Card';
+import { Loading, SkeletonCard } from '@/components/ui/Skeleton';
 import { useTrends } from '@/hooks/useTrends';
 import { formatCalendarDate } from '@/lib/dates';
 
@@ -31,9 +32,10 @@ export default function Trends() {
       </header>
 
       {trends.isPending && (
-        <Card tone="quiet" className="p-5">
-          <p className="text-muted">Gathering your patterns…</p>
-        </Card>
+        <Loading label="Gathering your patterns">
+          <SkeletonCard lines={4} />
+          <SkeletonCard lines={3} />
+        </Loading>
       )}
 
       {trends.isError && (

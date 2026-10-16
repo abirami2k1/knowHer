@@ -125,6 +125,36 @@ In production, attach it to the EC2 instance role. Locally, create a dev IAM use
 
 Without credentials, deletion **fails closed**: nothing is removed and the user is told to try again. If the final Cognito delete fails after the data is gone, the user is already disabled; the subject is queued in `PendingCognitoDeletion` and retried on API boot and daily.
 
+## Daily nudge (web push)
+
+A one-a-day reminder to log, sent only to browsers that opted in. Setup:
+
+```bash
+cd api && npx web-push generate-vapid-keys
+```
+
+Put the pair in `api/.env` as `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`, with `VAPID_SUBJECT=mailto:you@example.com` (how a push service reaches you about a problem). The public key is **served** by `GET /push/key` rather than baked into the web bundle, so `/web` needs no push variable and the key can be rotated without a rebuild — rotating does invalidate every existing subscription, and everyone has to opt in again. With the keys unset, the API logs that the nudge is off and every other route carries on as normal.
+
+How it runs:
+
+- One `PushSubscription` row per **browser**, not per user — she may want the nudge on her phone and not her laptop. Each row holds its own `nudgeTime` ("HH:mm") and IANA `timeZone`. This is the only place knowHer stores a timezone; everywhere else a date is a plain local calendar date chosen by the client (D1).
+- A sweep runs each minute (`src/index.ts` → `services/push.ts`) and sends to every device whose **own clock** has passed its time, within a ten-minute catch-up window — so a restart at 20:01 still delivers, but an evening-long outage does not wake anyone at 3am. Each device records the local date it was nudged on, so a sweep cannot fire twice in one of her days.
+- A `404`/`410` from the push service means that browser is gone and the row is deleted; five softer failures in a row does the same.
+- **The notification carries no health data.** It lands on a lock screen, so it names no phase, symptom, date or cycle day — the wording lives in `NUDGE_COPY` in `services/push.ts` and is covered by a test that fails if a cycle word creeps in. Sweep logs are counts only.
+
+iOS needs 16.4+ **and** the app installed to the home screen before web push works at all; the opt-in UI says so.
+
+## Offline
+
+The engine lives on the server by design (D5), so a _fresh_ reading needs a connection. What works without one:
+
+- **The app opens.** Workbox precaches the shell and serves `index.html` for any navigation.
+- **Days can still be logged.** A write that fails on the network — and only on the network; an API that _refuses_ a day is a real error she sees straight away — is queued in IndexedDB, keyed by date, so re-editing a day replaces it. The queue replays through the **normal API client**, not service-worker Background Sync: the worker would replay hours later with the Cognito token it captured at the time, and every write would 401 in silence. `PUT /logs` upserts by date, so a replay is last-write-wins however long it waited.
+- **Home shows the last dashboard**, labelled with the time it was fetched and the day it described. Nothing else is cached: a stale coverline or ovulation day presented as current would be a worse answer than none.
+- **She is not thrown out.** An access token that expires offline cannot be refreshed, but it was never refused either — so the session holds, reads fall back to the device and writes queue. The session is rechecked the moment the connection returns, and a refresh token that has really gone signs her out then.
+
+**API responses are deliberately not cached by the service worker.** A Cache Storage entry full of health data would outlive sign-out, and a shared phone is a real case. The one cached read is the dashboard, in `localStorage`, and `clearOfflineData()` wipes it — along with any unsent days — on sign-out and after account deletion.
+
 ## Local database
 
 ```bash

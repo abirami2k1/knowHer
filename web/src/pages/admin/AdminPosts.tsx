@@ -1,8 +1,10 @@
-import { Plus } from 'lucide-react';
+import { FileText, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AUDIENCE_LABEL } from '@/components/admin/audience';
 import { Card, Eyebrow } from '@/components/ui/Card';
 import { useAdminPosts } from '@/hooks/useContent';
+import { Loading, SkeletonCard } from '@/components/ui/Skeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 /** Every post, drafts included. Only authors reach this page. */
 export default function AdminPosts() {
@@ -24,16 +26,23 @@ export default function AdminPosts() {
         <Plus aria-hidden className="size-5" /> New post
       </Link>
 
-      {posts.isPending && <p className="text-muted">Loading…</p>}
+      {posts.isPending && (
+        <Loading label="Loading your posts">
+          <SkeletonCard lines={1} />
+          <SkeletonCard lines={1} />
+        </Loading>
+      )}
       {posts.isError && (
         <p role="alert" className="text-primary">
           Couldn't load posts. Check your connection and try again.
         </p>
       )}
       {posts.data?.length === 0 && (
-        <Card tone="quiet" className="p-5">
-          <p className="text-ink-soft">No posts yet. Your first one starts as a draft.</p>
-        </Card>
+        <EmptyState
+          icon={FileText}
+          title="No posts yet"
+          body="Your first one starts as a draft — nothing is public until you publish it."
+        />
       )}
 
       <ul className="space-y-2.5">

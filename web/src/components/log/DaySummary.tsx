@@ -1,5 +1,7 @@
 import type { DailyLogDto } from '@shared/types';
+import { PenLine } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/ui/EmptyState';
 import {
   CERVIX_OPTIONS,
   ENERGY_LABELS,
@@ -17,9 +19,11 @@ function labelOf<T extends string>(options: { value: T; label: string }[], value
 export function DaySummary({ log }: { log: DailyLogDto | null }) {
   if (!log) {
     return (
-      <Card tone="quiet" className="p-5">
-        <p className="text-muted">Nothing recorded for this day yet.</p>
-      </Card>
+      <EmptyState
+        icon={PenLine}
+        title="Nothing recorded for this day yet"
+        body="Whatever you remember is worth adding — a mood on its own is a real entry."
+      />
     );
   }
 
@@ -48,9 +52,11 @@ export function DaySummary({ log }: { log: DailyLogDto | null }) {
 
   if (recorded.length === 0) {
     return (
-      <Card tone="quiet" className="p-5">
-        <p className="text-muted">Nothing recorded for this day yet.</p>
-      </Card>
+      <EmptyState
+        icon={PenLine}
+        title="Nothing recorded for this day yet"
+        body="Whatever you remember is worth adding — a mood on its own is a real entry."
+      />
     );
   }
 

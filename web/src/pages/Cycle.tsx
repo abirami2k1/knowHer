@@ -7,6 +7,10 @@ import { Card, Eyebrow } from '@/components/ui/Card';
 import { useAssessment } from '@/hooks/useAssessment';
 import { useCycles } from '@/hooks/useCycles';
 import { formatCalendarDate } from '@/lib/dates';
+import { Loading, SkeletonCard } from '@/components/ui/Skeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { LineChart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 /**
  * The cycle chart. Every value shown is decided by the API's rule engine —
@@ -20,9 +24,10 @@ export default function Cycle() {
 
   if (cycles.isPending) {
     return (
-      <Card tone="quiet" className="p-5">
-        <p className="text-muted">Loading…</p>
-      </Card>
+      <Loading label="Opening your chart">
+        <SkeletonCard lines={1} />
+        <SkeletonCard lines={5} />
+      </Loading>
     );
   }
 
@@ -35,12 +40,16 @@ export default function Cycle() {
             Not started yet
           </h1>
         </header>
-        <Card tone="quiet" className="p-5">
-          <p className="text-[15px] leading-relaxed text-ink-soft">
-            Your chart begins with your first period start. Log one from the daily log and it will
-            appear here.
-          </p>
-        </Card>
+        <EmptyState
+          icon={LineChart}
+          title="Your chart begins with your first period start"
+          body="Log one from the daily log and it will appear here."
+          action={
+            <Link to="/log" className="font-medium text-primary underline underline-offset-4">
+              Go to the daily log
+            </Link>
+          }
+        />
       </section>
     );
   }

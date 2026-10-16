@@ -1,4 +1,5 @@
 import { BottomNav } from './BottomNav';
+import { OfflineBanner } from './OfflineBanner';
 import { PageTransition } from './PageTransition';
 
 /**
@@ -10,6 +11,7 @@ export function AppShell() {
     <div className="grain min-h-dvh">
       <div aria-hidden className="grain-after" />
       <main className="mx-auto w-full max-w-md px-5 pt-8 pb-32">
+        <OfflineBanner />
         <PageTransition />
       </main>
       <BottomNav />

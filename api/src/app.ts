@@ -16,6 +16,7 @@ import { knowledgeRouter } from './routes/knowledge';
 import { logsRouter } from './routes/logs';
 import { meRouter } from './routes/me';
 import { onboardingRouter } from './routes/onboarding';
+import { pushRouter } from './routes/push';
 import { trendsRouter } from './routes/trends';
 
 /**
@@ -57,6 +58,7 @@ export function createApp() {
   app.use(knowledgeRouter);
   app.use(blogRouter);
   app.use(accountRouter);
+  app.use(pushRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

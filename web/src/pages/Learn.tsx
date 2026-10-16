@@ -1,8 +1,11 @@
 import type { BlogPostSummary, KnowledgeArticleDto } from '@shared/types';
+import { BookOpen } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ContentList, type ContentItem } from '@/components/learn/ContentList';
-import { Card, Eyebrow } from '@/components/ui/Card';
+import { Eyebrow } from '@/components/ui/Card';
 import { useBlog, useKnowledge } from '@/hooks/useContent';
+import { Loading, SkeletonCard } from '@/components/ui/Skeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const SECTIONS = [
   { id: 'basics', label: 'Basics' },
@@ -87,7 +90,12 @@ export default function Learn() {
         ))}
       </nav>
 
-      {isPending && <p className="text-muted">Loading…</p>}
+      {isPending && (
+        <Loading label="Opening the library">
+          <SkeletonCard lines={2} />
+          <SkeletonCard lines={2} />
+        </Loading>
+      )}
       {isError && (
         <p role="alert" className="text-primary">
           Couldn't load this section. Check your connection and try again.
@@ -95,11 +103,11 @@ export default function Learn() {
       )}
 
       {!isPending && !isError && isEmpty && (
-        <Card tone="quiet" className="p-5">
-          <p className="text-[15px] leading-relaxed text-ink-soft">
-            Nothing here yet — new pieces will appear as they're published.
-          </p>
-        </Card>
+        <EmptyState
+          icon={BookOpen}
+          title="Nothing here yet"
+          body="New pieces will appear in this section as they're published."
+        />
       )}
 
       {!isPending &&
