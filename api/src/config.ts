@@ -46,4 +46,23 @@ export const CONFIG = {
       clientId: envRequired('COGNITO_CLIENT_ID'),
     };
   },
+  /**
+   * Web-push VAPID identity (Task 13). Lazy like the others: an API without
+   * push configured still serves every other route — the nudge simply stays off.
+   */
+  get vapid(): { publicKey: string; privateKey: string; subject: string } {
+    return {
+      publicKey: envRequired('VAPID_PUBLIC_KEY'),
+      privateKey: envRequired('VAPID_PRIVATE_KEY'),
+      subject: envRequired('VAPID_SUBJECT'),
+    };
+  },
+  /** True when the nudge can run at all. Checked before the sweep is scheduled. */
+  get pushConfigured(): boolean {
+    return Boolean(
+      process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_SUBJECT,
+    );
+  },
+  /** How often the nudge sweep looks for devices whose local time has come. */
+  nudgeSweepMs: 60 * 1000,
 } as const;

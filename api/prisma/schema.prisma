@@ -98,10 +98,11 @@ model User {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  cycles    Cycle[]
-  dailyLogs DailyLog[]
-  summaries CycleSummary[]
-  blogPosts BlogPost[]
+  cycles      Cycle[]
+  dailyLogs   DailyLog[]
+  summaries   CycleSummary[]
+  blogPosts   BlogPost[]
+  pushDevices PushSubscription[]
 }
 
 model Cycle {
@@ -213,4 +214,41 @@ model PendingCognitoDeletion {
   attempts   Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+/// One browser the user has opted in to the daily nudge from (Task 13).
+/// She may say yes on her phone and not on her laptop, so the nudge time and
+/// timezone live per device — this is the ONE place a timezone is stored
+/// (everything else in knowHer is a plain local calendar date, D1).
+/// Holds no health data: the nudge never names a phase, a symptom or a date.
+model PushSubscription {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// The push service URL for this browser. Unique: re-subscribing the same
+  /// browser updates the row rather than piling up duplicates.
+  endpoint String @unique
+  /// Encryption material handed over by the browser at opt-in.
+  p256dh   String
+  auth     String
+
+  /// When she wants it, in her own local clock — "HH:mm", never a UTC instant.
+  nudgeTime String @default("20:00")
+  /// IANA zone captured at opt-in (e.g. "Asia/Kolkata"), so "20:00" means
+  /// 20:00 where she is, and keeps meaning that across a DST change.
+  timeZone  String
+
+  /// The local calendar date this device was last nudged on, so a sweep that
+  /// runs twice in the same minute cannot send twice.
+  lastNudgedOn DateTime? @db.Date
+  /// Consecutive delivery failures; the sweep drops a device the push service
+  /// has declared gone (404/410) immediately, this catches the quieter ones.
+  failures     Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([nudgeTime])
 }

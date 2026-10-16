@@ -334,9 +334,34 @@ export interface AccountExport {
   cycleSummaries: CycleSummaryDto[];
   /** Only for author accounts; empty otherwise. */
   blogPosts: AdminPostDto[];
+  /** Browsers opted in to the daily nudge. Never the encryption keys themselves. */
+  pushDevices: PushPreferenceDto[];
 }
 
 /** DELETE /account body. The phrase guards against a stray or replayed request. */
 export interface DeleteAccountRequest {
   confirm: 'delete my account';
+}
+
+// ── Daily nudge (Task 13) ────────────────────────────────────────────────
+
+/** One browser opted in to the daily nudge. Never carries the encryption keys back out. */
+export interface PushPreferenceDto {
+  endpoint: string;
+  /** Her local time, 'HH:mm'. */
+  nudgeTime: string;
+  /** IANA zone captured at opt-in, so the time means what it says where she is. */
+  timeZone: string;
+}
+
+/** PUT /push/subscriptions — opting a browser in, or moving its time. */
+export interface SavePushSubscriptionRequest extends PushPreferenceDto {
+  p256dh: string;
+  auth: string;
+}
+
+/** GET /push/key — the VAPID public key the browser needs to subscribe. */
+export interface PushKeyDto {
+  /** null when push is not configured on this API; the UI then offers nothing. */
+  publicKey: string | null;
 }

@@ -259,7 +259,7 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Task 13 — PWA POLISH & DAILY NUDGE
 
-- [ ] **13.0.1** `[api]` Push infra: VAPID keys, store push subscriptions, scheduled worker fires the nudge at each user's chosen local time. AC: test push delivered.
+- [x] **13.0.1** `[api]` Push infra: VAPID keys, store push subscriptions, scheduled worker fires the nudge at each user's chosen local time. AC: test push delivered.
 - [ ] **13.0.2** `[web]` Opt-in nudge UI + subscription; time set in Profile; respect opt-out. Note: iOS requires 16.4+ **and** the PWA installed to home screen — set expectations in-app. AC: fires at chosen time on a subscribed device.
 - [ ] **13.0.3** `[web]` Offline: queue daily logs (upsert-by-date makes sync last-write-wins), sync when online; cache shell + **last-fetched** dashboard. Fresh assessments require a connection (engine is server-side by design). AC: offline log syncs later; stale dashboard clearly dated.
 - [ ] **13.0.4** `[web]` Loading skeletons, empty states, toast pass. AC: no raw spinners/blank states.
