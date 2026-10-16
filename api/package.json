@@ -2,7 +2,7 @@
   "name": "knowher-api",
   "private": true,
   "version": "0.0.0",
-  "description": "knowHer API \u2014 Node + Express + TypeScript. All business logic and cycle math live here.",
+  "description": "knowHer API — Node + Express + TypeScript. All business logic and cycle math live here.",
   "main": "dist/api/src/index.js",
   "engines": {
     "node": ">=24"
@@ -21,6 +21,7 @@
     "set-role": "tsx prisma/set-role.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.1141.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "aws-jwt-verify": "^5.2.1",

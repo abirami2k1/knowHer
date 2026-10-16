@@ -105,6 +105,26 @@ npm run set-role -- <cognitoSub> user      # revoke
 
 They will see **Write and publish posts** on their Profile. The API checks the role on every author route; hiding the link is only a courtesy.
 
+## Account deletion (AWS permissions)
+
+`DELETE /account` follows decision D8: disable the Cognito user → delete every database row in one statement → delete the Cognito user. The API therefore needs an IAM policy allowing exactly these actions on the user pool's ARN:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": [
+    "cognito-idp:AdminDisableUser",
+    "cognito-idp:AdminEnableUser",
+    "cognito-idp:AdminDeleteUser"
+  ],
+  "Resource": "arn:aws:cognito-idp:<region>:<account-id>:userpool/<pool-id>"
+}
+```
+
+In production, attach it to the EC2 instance role. Locally, create a dev IAM user with only this policy and set `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` in `api/.env` (or use a named AWS profile).
+
+Without credentials, deletion **fails closed**: nothing is removed and the user is told to try again. If the final Cognito delete fails after the data is gone, the user is already disabled; the subject is queued in `PendingCognitoDeletion` and retried on API boot and daily.
+
 ## Local database
 
 ```bash

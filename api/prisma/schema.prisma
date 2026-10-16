@@ -203,3 +203,14 @@ model KnowledgeArticle {
 
   @@index([category, orderIndex])
 }
+
+/// D8: a deleted account whose Cognito user could not be removed on the spot.
+/// The user is already disabled and every DB row is gone; this holds only the
+/// Cognito subject so the API can retry on boot and daily. No health data.
+model PendingCognitoDeletion {
+  id         String   @id @default(cuid())
+  cognitoSub String   @unique
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

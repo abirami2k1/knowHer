@@ -111,6 +111,16 @@ async function uniqueSlug(base: string): Promise<string> {
   return `${base}-${n}`;
 }
 
+/** One author's posts, drafts included — for her own export. */
+export async function listPostsByAuthor(authorId: string): Promise<AdminPostDto[]> {
+  const posts = await prisma.blogPost.findMany({
+    where: { authorId },
+    orderBy: { createdAt: 'asc' },
+    include: WITH_AUTHOR,
+  });
+  return posts.map(toAdmin);
+}
+
 /** New posts always start as drafts. */
 export async function createPost(authorId: string, input: CreatePostInput): Promise<AdminPostDto> {
   const post = await prisma.blogPost.create({

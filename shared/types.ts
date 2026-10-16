@@ -307,3 +307,36 @@ export interface AdminPostDto {
   updatedAt: string;
   authorName: string | null;
 }
+
+// ── Account ──────────────────────────────────────────────────────────────
+
+/** A closed cycle kept only as a summary once its raw logs are pruned (retention, post-launch). */
+export interface CycleSummaryDto {
+  cycleStartDate: string;
+  cycleLength: number;
+  ovulationDay: number | null;
+  peakDay: number | null;
+  lutealLength: number | null;
+  avgBbtF: number | null;
+  symptomAggregate: unknown;
+  energyAggregate: unknown;
+  notes: string | null;
+}
+
+/** GET /account/export — everything knowHer holds about her, in one file. */
+export interface AccountExport {
+  exportedAt: string;
+  /** Plain words on what the file contains and what it does not. */
+  note: string;
+  profile: UserProfile;
+  cycles: CycleDto[];
+  dailyLogs: DailyLogDto[];
+  cycleSummaries: CycleSummaryDto[];
+  /** Only for author accounts; empty otherwise. */
+  blogPosts: AdminPostDto[];
+}
+
+/** DELETE /account body. The phrase guards against a stray or replayed request. */
+export interface DeleteAccountRequest {
+  confirm: 'delete my account';
+}
