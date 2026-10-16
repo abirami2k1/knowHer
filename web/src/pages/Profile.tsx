@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { DailyNudge } from '@/components/profile/DailyNudge';
 import { YourData } from '@/components/profile/YourData';
 import { Button } from '@/components/ui/Button';
 import { Card, Eyebrow } from '@/components/ui/Card';
@@ -66,6 +67,8 @@ export default function Profile() {
           Write and publish posts
         </Link>
       )}
+
+      <DailyNudge />
 
       <YourData onDeleted={onDeleted} />
 
