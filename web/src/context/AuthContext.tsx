@@ -44,22 +44,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => setAccessTokenProvider(null);
   }, [pool]);
 
-  // Restore the session on load (refresh token lives in the SDK's storage).
+  // Restore the session on load (refresh token lives in the SDK's storage), and
+  // check it again whenever the connection comes back.
   useEffect(() => {
     if (!pool) return;
     let cancelled = false;
-    const user = pool.getCurrentUser();
-    void getSession(user).then((session) => {
-      if (cancelled) return;
-      if (session && user) {
-        setEmail(emailFromSession(session) ?? user.getUsername());
-        setStatus('authed');
-      } else {
-        setStatus('anon');
-      }
-    });
+
+    const restore = () => {
+      const user = pool.getCurrentUser();
+      void getSession(user).then((session) => {
+        if (cancelled) return;
+        if (session && user) {
+          setEmail(emailFromSession(session) ?? user.getUsername());
+          setStatus('authed');
+        } else if (user && !navigator.onLine) {
+          // An expired access token offline cannot be refreshed — but it was
+          // never *refused* either. Bouncing her to a login screen she cannot
+          // complete would take the app away exactly when she still has a day
+          // to log, so she stays in: reads fall back to what the device holds
+          // and writes queue. The session is rechecked the moment she is back,
+          // and a refresh token that has really gone signs her out then.
+          setStatus('authed');
+        } else {
+          setStatus('anon');
+        }
+      });
+    };
+
+    restore();
+    window.addEventListener('online', restore);
     return () => {
       cancelled = true;
+      window.removeEventListener('online', restore);
     };
   }, [pool]);
 
@@ -101,17 +117,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     (address: string, password: string) =>
       new Promise<void>((resolve, reject) => {
         const user = new CognitoUser({ Username: address, Pool: requirePool() });
-        user.authenticateUser(new AuthenticationDetails({ Username: address, Password: password }), {
-          onSuccess: (session) => {
-            setEmail(emailFromSession(session) ?? address);
-            setStatus('authed');
-            resolve();
+        user.authenticateUser(
+          new AuthenticationDetails({ Username: address, Password: password }),
+          {
+            onSuccess: (session) => {
+              setEmail(emailFromSession(session) ?? address);
+              setStatus('authed');
+              resolve();
+            },
+            onFailure: reject,
+            // SRP only; no MFA or forced password change in the MVP pool.
+            newPasswordRequired: () =>
+              reject(
+                Object.assign(new Error('Password change required'), {
+                  code: 'NewPasswordRequired',
+                }),
+              ),
           },
-          onFailure: reject,
-          // SRP only; no MFA or forced password change in the MVP pool.
-          newPasswordRequired: () =>
-            reject(Object.assign(new Error('Password change required'), { code: 'NewPasswordRequired' })),
-        });
+        );
       }),
     [requirePool],
   );

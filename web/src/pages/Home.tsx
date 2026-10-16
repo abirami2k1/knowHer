@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { ExpectedOvulation } from '@/components/home/ExpectedOvulation';
 import { TodayCard } from '@/components/home/TodayCard';
 import { Card, Eyebrow } from '@/components/ui/Card';
-import { useDashboard } from '@/hooks/useDashboard';
+import { Loading, Skeleton, SkeletonCard } from '@/components/ui/Skeleton';
+import { lastFetchedDashboard, useDashboard } from '@/hooks/useDashboard';
 import { useMe } from '@/hooks/useMe';
 import { formatCalendarDate, todayIsoDate } from '@/lib/dates';
 
@@ -38,6 +39,9 @@ export default function Home() {
   const me = useMe();
   const dashboard = useDashboard();
   const name = me.data?.displayName;
+  // Only reached for: the app opened with no connection. Shown dated, never as today's.
+  const cached = dashboard.isError ? lastFetchedDashboard() : null;
+  const shown = dashboard.data ?? cached?.data;
 
   return (
     <div className="space-y-6">
@@ -49,12 +53,18 @@ export default function Home() {
       </header>
 
       {dashboard.isPending && (
-        <Card className="p-5">
-          <p className="text-muted">Reading your cycle…</p>
-        </Card>
+        <Loading label="Reading your cycle">
+          <Card className="space-y-3 p-5">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-7 w-2/3" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+          </Card>
+          <SkeletonCard lines={1} />
+        </Loading>
       )}
 
-      {dashboard.isError && (
+      {dashboard.isError && !cached && (
         <Card className="p-5">
           <p role="alert" className="text-primary">
             Couldn't load today. Check your connection and try again.
@@ -62,10 +72,20 @@ export default function Home() {
         </Card>
       )}
 
-      {dashboard.data && (
+      {cached && (
+        <Card tone="quiet" className="p-5">
+          <p className="text-sm leading-relaxed text-ink-soft">
+            Couldn't reach knowHer, so this is your last reading, as of{' '}
+            {formatAsOf(cached.fetchedAt)}
+            {cached.today !== todayIsoDate() && ` on ${formatCalendarDate(cached.today)}`}.
+          </p>
+        </Card>
+      )}
+
+      {shown && (
         <>
-          <TodayCard dashboard={dashboard.data} />
-          <ExpectedOvulation expected={dashboard.data.expectedOvulation} />
+          <TodayCard dashboard={shown} />
+          <ExpectedOvulation expected={shown.expectedOvulation} />
         </>
       )}
 
@@ -87,4 +107,10 @@ export default function Home() {
       </nav>
     </div>
   );
+}
+
+/** "14:32" or "14:32 yesterday" — enough to judge how stale a reading is. */
+function formatAsOf(iso: string): string {
+  const at = new Date(iso);
+  return at.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 }

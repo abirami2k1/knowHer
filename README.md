@@ -144,6 +144,17 @@ How it runs:
 
 iOS needs 16.4+ **and** the app installed to the home screen before web push works at all; the opt-in UI says so.
 
+## Offline
+
+The engine lives on the server by design (D5), so a _fresh_ reading needs a connection. What works without one:
+
+- **The app opens.** Workbox precaches the shell and serves `index.html` for any navigation.
+- **Days can still be logged.** A write that fails on the network — and only on the network; an API that _refuses_ a day is a real error she sees straight away — is queued in IndexedDB, keyed by date, so re-editing a day replaces it. The queue replays through the **normal API client**, not service-worker Background Sync: the worker would replay hours later with the Cognito token it captured at the time, and every write would 401 in silence. `PUT /logs` upserts by date, so a replay is last-write-wins however long it waited.
+- **Home shows the last dashboard**, labelled with the time it was fetched and the day it described. Nothing else is cached: a stale coverline or ovulation day presented as current would be a worse answer than none.
+- **She is not thrown out.** An access token that expires offline cannot be refreshed, but it was never refused either — so the session holds, reads fall back to the device and writes queue. The session is rechecked the moment the connection returns, and a refresh token that has really gone signs her out then.
+
+**API responses are deliberately not cached by the service worker.** A Cache Storage entry full of health data would outlive sign-out, and a shared phone is a real case. The one cached read is the dashboard, in `localStorage`, and `clearOfflineData()` wipes it — along with any unsent days — on sign-out and after account deletion.
+
 ## Local database
 
 ```bash

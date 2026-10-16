@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import { useMe } from '@/hooks/useMe';
 import { buildRequest, useOnboarding } from '@/hooks/useOnboarding';
 import { postOnboarding } from '@/lib/api/onboarding';
+import { friendlyError } from '@/lib/errors';
+import { MOTION, useMotion } from '@/lib/motion';
 import {
   ConfirmStep,
   GoalsStep,
@@ -21,8 +23,9 @@ export default function Onboarding() {
   const flow = useOnboarding();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const reduceMotion = useReducedMotion();
-  const shift = reduceMotion ? 0 : 16;
+  const { reduce } = useMotion();
+  // Steps slide sideways: the flow moves forward, so the motion should too.
+  const shift = reduce ? 0 : 16;
 
   const submit = useMutation({
     mutationFn: () => postOnboarding(buildRequest(flow.draft)),
@@ -31,7 +34,7 @@ export default function Onboarding() {
       toast.success(`You're all set${profile.displayName ? `, ${profile.displayName}` : ''}.`);
       navigate('/', { replace: true });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: unknown) => toast.error(friendlyError(error)),
   });
 
   // 5.2.9: someone who has already finished never sees the flow again.
@@ -58,7 +61,7 @@ export default function Onboarding() {
             className="h-full bg-primary"
             initial={false}
             animate={{ width: `${(flow.stepNumber / flow.stepCount) * 100}%` }}
-            transition={{ duration: reduceMotion ? 0 : 0.3, ease: 'easeOut' }}
+            transition={{ duration: reduce ? 0 : MOTION.travel, ease: MOTION.ease }}
           />
         </div>
       </div>
@@ -70,7 +73,7 @@ export default function Onboarding() {
             initial={{ opacity: 0, x: shift }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -shift }}
-            transition={{ duration: reduceMotion ? 0 : 0.2, ease: 'easeOut' }}
+            transition={{ duration: reduce ? 0 : MOTION.base, ease: MOTION.ease }}
           >
             {step === 'welcome' && <WelcomeStep />}
             {step === 'profile' && <ProfileStep draft={draft} set={set} />}

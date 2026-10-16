@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { AppShell } from '@/components/AppShell';
 import { RequireAuth } from '@/components/RequireAuth';
 import { RequireAuthor } from '@/components/RequireAuthor';
+import { TitleSync } from '@/components/TitleSync';
 import AdminPosts from '@/pages/admin/AdminPosts';
 import EditPost from '@/pages/admin/EditPost';
 import Login from '@/pages/auth/Login';
@@ -17,36 +18,42 @@ import Reader from '@/pages/Reader';
 import Trends from '@/pages/Trends';
 
 /**
- * All routes live here. Public: /login, /signup. Everything else sits behind
- * RequireAuth. /onboarding is authed but deliberately outside the shell — no bottom
- * nav until she has finished. Everything else renders inside it; /admin is
- * additionally author-only (the API enforces the same, D7).
+ * All routes live here, under TitleSync so every one of them names itself.
+ * Public: /login, /signup. Everything else sits behind RequireAuth. /onboarding
+ * is authed but deliberately outside the shell — no bottom nav until she has
+ * finished. Everything else renders inside it; /admin is additionally
+ * author-only (the API enforces the same, D7).
  */
 export const router = createBrowserRouter([
-  { path: '/login', element: <Login /> },
-  { path: '/signup', element: <SignUp /> },
   {
-    element: <RequireAuth />,
+    element: <TitleSync />,
     children: [
-      { path: '/onboarding', element: <Onboarding /> },
+      { path: '/login', element: <Login /> },
+      { path: '/signup', element: <SignUp /> },
       {
-        path: '/',
-        element: <AppShell />,
+        element: <RequireAuth />,
         children: [
-          { index: true, element: <Home /> },
-          { path: 'log', element: <Log /> },
-          { path: 'cycle', element: <Cycle /> },
-          { path: 'history', element: <History /> },
-          { path: 'trends', element: <Trends /> },
-          { path: 'learn', element: <Learn /> },
-          { path: 'learn/:kind/:slug', element: <Reader /> },
-          { path: 'profile', element: <Profile /> },
+          { path: '/onboarding', element: <Onboarding /> },
           {
-            element: <RequireAuthor />,
+            path: '/',
+            element: <AppShell />,
             children: [
-              { path: 'admin', element: <AdminPosts /> },
-              { path: 'admin/new', element: <EditPost /> },
-              { path: 'admin/:id', element: <EditPost /> },
+              { index: true, element: <Home /> },
+              { path: 'log', element: <Log /> },
+              { path: 'cycle', element: <Cycle /> },
+              { path: 'history', element: <History /> },
+              { path: 'trends', element: <Trends /> },
+              { path: 'learn', element: <Learn /> },
+              { path: 'learn/:kind/:slug', element: <Reader /> },
+              { path: 'profile', element: <Profile /> },
+              {
+                element: <RequireAuthor />,
+                children: [
+                  { path: 'admin', element: <AdminPosts /> },
+                  { path: 'admin/new', element: <EditPost /> },
+                  { path: 'admin/:id', element: <EditPost /> },
+                ],
+              },
             ],
           },
         ],

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Markdown } from '@/components/content/Markdown';
 import { Card, Eyebrow } from '@/components/ui/Card';
 import { useBlogPost, useKnowledge } from '@/hooks/useContent';
+import { Loading, Skeleton } from '@/components/ui/Skeleton';
 
 const CATEGORY_LABEL: Record<string, string> = {
   basics: 'The basics',
@@ -72,7 +73,16 @@ function PostReader({ slug }: { slug: string }) {
 }
 
 function ReaderView({ isPending, readable }: { isPending: boolean; readable?: Readable }) {
-  if (isPending) return <p className="text-muted">Loading…</p>;
+  if (isPending) {
+    return (
+      <Loading label="Opening this piece">
+        <Skeleton className="h-7 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </Loading>
+    );
+  }
 
   return (
     <article className="space-y-6">

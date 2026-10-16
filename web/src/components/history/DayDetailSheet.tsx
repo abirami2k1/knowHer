@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Sheet } from '@/components/ui/Sheet';
 import { useDayLog } from '@/hooks/useLogs';
 import { formatCalendarDate } from '@/lib/dates';
+import { Loading, Skeleton } from '@/components/ui/Skeleton';
 
 /**
  * A logged day, read-only, with one way through to editing it. Reuses the log's
@@ -25,7 +26,14 @@ export function DayDetailSheet({ date, onClose }: { date: string | null; onClose
       }
     >
       <div className="py-2">
-        {day.isPending ? <p className="text-muted">Loading…</p> : <DaySummary log={day.log} />}
+        {day.isPending ? (
+          <Loading label="Opening this day">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </Loading>
+        ) : (
+          <DaySummary log={day.log} />
+        )}
       </div>
     </Sheet>
   );
