@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { YourData } from '@/components/profile/YourData';
 import { Button } from '@/components/ui/Button';
 import { Card, Eyebrow } from '@/components/ui/Card';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,12 +13,14 @@ export default function Profile() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  function onSignOut() {
+  function leave(message: string) {
     signOut();
     queryClient.clear(); // nothing of this user's stays in memory for the next one
-    toast('Signed out. Take care.');
+    toast(message);
     navigate('/login', { replace: true });
   }
+  const onSignOut = () => leave('Signed out. Take care.');
+  const onDeleted = () => leave('Your account and all your data have been deleted. Take care.');
 
   const rows: [string, string][] = [
     ['Signed in as', email ?? '—'],
@@ -64,11 +67,7 @@ export default function Profile() {
         </Link>
       )}
 
-      <Card tone="quiet" className="p-4">
-        <p className="text-sm leading-relaxed text-ink-soft">
-          Exporting your data and deleting your account arrive in Task 12.
-        </p>
-      </Card>
+      <YourData onDeleted={onDeleted} />
 
       <Button variant="secondary" onClick={onSignOut}>
         Sign out

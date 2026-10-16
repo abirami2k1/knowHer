@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { CONFIG } from './config';
 import { fail } from './lib/respond';
 import { errorHandler, notFoundHandler } from './middleware/error-handler';
+import { accountRouter } from './routes/account';
 import { assessmentRouter } from './routes/assessment';
 import { blogRouter } from './routes/blog';
 import { cyclesRouter } from './routes/cycles';
@@ -55,6 +56,7 @@ export function createApp() {
   app.use(trendsRouter);
   app.use(knowledgeRouter);
   app.use(blogRouter);
+  app.use(accountRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

@@ -243,10 +243,10 @@ Legend for status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Task 12 — ACCOUNT & PRIVACY
 
-- [ ] **12.0.1** `[api]` `GET /account/export` → full user data JSON (and/or ZIP). AC: downloads complete data.
-- [ ] **12.0.2** `[web]` Export button in Profile. AC: triggers download.
-- [ ] **12.0.3** `[api]` `DELETE /account` → cascade delete + remove Cognito user. AC: all rows gone.
-- [ ] **12.0.4** `[web]` Delete flow with confirmation; logs out after. AC: account removed, session cleared.
+- [x] **12.0.1** `[api]` `GET /account/export` → full user data JSON (and/or ZIP). AC: downloads complete data.
+- [x] **12.0.2** `[web]` Export button in Profile. AC: triggers download.
+- [~] **12.0.3** `[api]` `DELETE /account` → cascade delete + remove Cognito user. AC: all rows gone.
+- [x] **12.0.4** `[web]` Delete flow with confirmation; logs out after. AC: account removed, session cleared.
 > **Retention job: DEFERRED post-launch.** The `CycleSummary` schema + aggregates ship in Task 2, but the raw-log deletion job does not ship in MVP. Decide **automatic vs opt-in** after launch and before any user reaches ~6 cycles (revisit around month 4–5). The export (12.0.1) must clearly state what it contains.
 
 ### Deferred (post-launch)
